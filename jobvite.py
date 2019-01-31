@@ -4,6 +4,16 @@ from requests.compat import urlencode
 
 
 class JobviteAPI:
+    """Interface for accessing the Jobvite v2 API.
+
+        args:
+            api_key (str): stored in environment as 'JOBVITE_API_KEY'
+            api_Secret (str): stored in environment as 'JOBVITE_API_SECRET'
+
+        example:
+            >>> jv = JobviteAPI(environ['JOBVITE_API_KEY'], environ['JOBVITE_API_SECRET'])
+
+    """
 
     ENDPOINT = 'https://api.jobvite.com/api/v2'
 
@@ -23,7 +33,7 @@ class JobviteAPI:
 
     @property
     def candidates_endpoint(self):
-        return '{}/{}'.format(self.ENDPOINT, 'candidate')
+        return f'{self.ENDPOINT}/candidate'
 
 
     def _get(self, endpoint, **params):
@@ -34,17 +44,17 @@ class JobviteAPI:
             if k not in params:
                 params[k] = v
 
-        r = requests.get(endpoint, params=params)
-        if r.status_code == 200:
-            return r
+        response = requests.get(endpoint, params=params)
+        if response.status_code == 200:
+            return response
         else:
-            r.raise_for_status()
+            response.raise_for_status()
 
 
     def candidates(self, modified_date=None, batch_size=100, limit=None, **params):
         """Fetch candidates from Jobvite API.
 
-        This API will stream candidates from the Jobvite API, making multiple requests until all
+        This API will stream candidates from the Jobvite API as a generator, making multiple requests until all
         candidates meeting the filters are returned.
 
         Args:
@@ -53,8 +63,12 @@ class JobviteAPI:
             limit (int): stop fetching candidates after a limit is reached. this is primarily for testing.
             **params: additional args that may be passed into the Jobvite API.
 
-        Returns:
-            generator: candidate objects.
+        Yields:
+            dict: candidate JSON converted to objects.
+
+        Examples:
+            >>> jv.candidates(batch_size=500, modified_date='2018-12-20')
+            >>> jv.candidates(limit=30)
 
         Todo:
             * implement wflowstate filter (if necessary).

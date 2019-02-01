@@ -79,13 +79,12 @@ class JobviteAPI:
             params['startdate'] = modified_date
             params['dateFormat'] = 'yyyy-MM-dd'
 
-        if limit < batch_size:
+        params['count'] = batch_size
+        if limit and limit < batch_size:
             params['count'] = limit
 
         if batch_size > 500:
             raise ValueError('Batch size cannot be greater than "500"')
-
-        params['count'] = batch_size
 
         return self._stream(self.candidates_endpoint, params, batch_size=batch_size, limit=limit, items_key='candidates')
 
@@ -102,7 +101,7 @@ class JobviteAPI:
                 yield c
 
             num_items = len(data[items_key])
-            if num_items < batch_size or collected_items >= limit:
+            if num_items < batch_size or (limit and collected_items >= limit):
                 break
             else:
                 start += batch_size

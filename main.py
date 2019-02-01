@@ -6,6 +6,6 @@ jobvite_secret= os.getenv("JOBVITE_API_SECRET")
 
 api = jobvite.JobviteAPI(jobvite_key, jobvite_secret)
 
-candiates = api.candidates()
+candidates = api.candidates()
 
 print(candidates)

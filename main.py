@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import jobvite
+from timer import elapsed
 
 
 logging.basicConfig(
@@ -13,14 +14,14 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %I:%M:%S%p",
 )
 
-#TODO: move env vars to api class
+# TODO: move env vars to api class
 JOBVITE_KEY = os.getenv("JOBVITE_API_KEY")
 JOBVITE_SECRET = os.getenv("JOBVITE_API_SECRET")
 
 if len(sys.argv) > 1:
     MODIFIED_DATE = sys.argv[1]
 else:
-    MODIFIED_DATE = (datetime.now() - timedelta(1)).strftime('%Y-%m-%d')
+    MODIFIED_DATE = (datetime.now() - timedelta(1)).strftime("%Y-%m-%d")
 
 
 def get_candidates():
@@ -28,11 +29,12 @@ def get_candidates():
     return api.candidates(modified_date=MODIFIED_DATE)
 
 
+@elapsed
 def stream_to_file(candidates_response):
-    datestamp = datetime.now().strftime('%Y%m%d%H%M')
+    datestamp = datetime.now().strftime("%Y%m%d%H%M")
     for candidate in candidates_response:
         data = json.dumps(candidate)
-        f = open(f'output/candidates_{datestamp}.json', 'a')
+        f = open(f"output/candidates_{datestamp}.json", "a")
         f.write(data)
 
 

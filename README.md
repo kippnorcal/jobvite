@@ -62,3 +62,7 @@ Run in detached mode (runs as background process) with the output folder mapped 
 $ docker run -d -v ${PWD}/output:/app/output --name=jobvite jobvite 
 ```
 
+### Testing
+
+To execute tests, run:
+* `pipenv run pytest`

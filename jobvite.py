@@ -1,5 +1,6 @@
 import logging
 import requests
+from os import getenv
 from requests.compat import urlencode
 
 
@@ -15,31 +16,27 @@ class JobviteAPI:
 
     """
 
-    ENDPOINT = 'https://api.jobvite.com/api/v2'
+    ENDPOINT = "https://api.jobvite.com/api/v2"
 
-    def __init__(self, api_key, api_secret, logger=None):
-        self.api_key = api_key
-        self.api_secret = api_secret
+    def __init__(self, api_key=None, api_secret=None, logger=None):
+        self.api_key = api_key if api_key else getenv("JOBVITE_API_KEY")
+        self.api_secret = api_secret if api_secret else getenv("JOBVITE_API_SECRET")
         self.logger = logger if logger else logging.getLogger()
-
 
     @property
     def default_request_params(self):
-        return {
-                'api': self.api_key,
-                'sc': self.api_secret,
-            }
-
+        return {"api": self.api_key, "sc": self.api_secret}
 
     @property
     def candidates_endpoint(self):
-        return f'{self.ENDPOINT}/candidate'
-
+        return f"{self.ENDPOINT}/candidate"
 
     def _get(self, endpoint, **params):
         params = params.copy()
-        self.logger.debug('requesting: "{}?{}"'.format(endpoint, urlencode(params, doseq=True)))
-        
+        self.logger.debug(
+            'requesting: "{}?{}"'.format(endpoint, urlencode(params, doseq=True))
+        )
+
         for k, v in self.default_request_params.items():
             if k not in params:
                 params[k] = v
@@ -49,7 +46,6 @@ class JobviteAPI:
             return response
         else:
             response.raise_for_status()
-
 
     def candidates(self, modified_date=None, batch_size=100, limit=None, **params):
         """Fetch candidates from Jobvite API.
@@ -76,28 +72,33 @@ class JobviteAPI:
         """
         params = params.copy()
         if modified_date:
-            params['startdate'] = modified_date
-            params['dateFormat'] = 'yyyy-MM-dd'
+            params["startdate"] = modified_date
+            params["dateFormat"] = "yyyy-MM-dd"
 
-        params['count'] = batch_size
+        params["count"] = batch_size
         if limit and limit < batch_size:
-            params['count'] = limit
+            params["count"] = limit
 
         if batch_size > 500:
             raise ValueError('Batch size cannot be greater than "500"')
 
-        return self._stream(self.candidates_endpoint, params, batch_size=batch_size, limit=limit, items_key='candidates')
-
+        return self._stream(
+            self.candidates_endpoint,
+            params,
+            batch_size=batch_size,
+            limit=limit,
+            items_key="candidates",
+        )
 
     def _stream(self, endpoint, params, batch_size=100, limit=None, items_key=None):
         start = 0
         collected_items = 0
         while True:
-            params['start'] = start
+            params["start"] = start
             r = self._get(endpoint, **params)
             data = r.json()
             for c in data[items_key]:
-                collected_items +=1
+                collected_items += 1
                 yield c
 
             num_items = len(data[items_key])
@@ -105,4 +106,3 @@ class JobviteAPI:
                 break
             else:
                 start += batch_size
-                

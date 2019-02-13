@@ -25,13 +25,14 @@ else:
 
 def main():
     try:
-        results = jobvite.JobviteAPI().candidates(modified_date=MODIFIED_DATE, limit=5)
-        clean = []
+        results = jobvite.JobviteAPI().candidates(modified_date=MODIFIED_DATE)
+        candidates = []
         for result in results:
-            clean.append(Candidate(result).__dict__)
+            candidates.append(Candidate(result).__dict__)
 
-        df = pd.DataFrame(clean)
-        print(df)
+        df = pd.DataFrame(candidates)
+        datestamp = datetime.now().strftime("%Y%m%d%I%M")
+        df.to_csv(f"output/candidates_{datestamp}.csv", sep=",", index=False)
 
     except Exception as e:
         logging.critical(e)

@@ -72,7 +72,7 @@ class JobviteAPI:
         """
         params = params.copy()
         if modified_date:
-            params["startdate"] = modified_date
+            params["datestart"] = modified_date
             params["dateFormat"] = "yyyy-MM-dd"
 
         params["count"] = batch_size

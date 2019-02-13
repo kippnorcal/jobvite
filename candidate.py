@@ -1,8 +1,18 @@
+import re
+
+
 class Candidate:
     def __init__(self, candidate):
         self.candidate = candidate
         self._extract_candidate_info()
         delattr(self, "candidate")
+
+    def _remove_whitespace(self, s):
+        if s is not None:
+            s = str(s)
+            s = s.strip().strip("\n").strip("\t")
+            s = s.replace("\n", "").replace("\t", "")
+        return s
 
     def _extract_candidate_info(self):
         self._extract_candidate_fields()
@@ -25,7 +35,7 @@ class Candidate:
             "workStatus",
         ]
         for field in fields:
-            value = self.candidate.get(field)
+            value = self._remove_whitespace(self.candidate.get(field))
             setattr(self, field, value)
 
     def _extract_application_fields(self):
@@ -43,7 +53,7 @@ class Candidate:
             "workflowStateEId",
         ]
         for field in fields:
-            value = application.get(field)
+            value = self._remove_whitespace(application.get(field))
             setattr(self, field, value)
 
     def _extract_job_fields(self):
@@ -58,7 +68,7 @@ class Candidate:
             "title",
         ]
         for field in fields:
-            value = job.get(field)
+            value = self._remove_whitespace(job.get(field))
             setattr(self, field, value)
 
     def _extract_custom_fields(self):
@@ -86,6 +96,6 @@ class Candidate:
         ]
         for field in custom_fields:
             key = field.get("fieldCode")
-            value = field.get("value")
+            value = self._remove_whitespace(field.get("value"))
             if key in fields:
                 setattr(self, key, value)

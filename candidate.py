@@ -41,7 +41,7 @@ class Candidate:
             "workStatus",
         ]
         for field in fields:
-            value = self._remove_whitespace(self.candidate.get(field))
+            value = self._remove_whitespace(self.candidate.get(field, ""))
             setattr(self, field, value)
 
     def _extract_application_fields(self):
@@ -61,7 +61,7 @@ class Candidate:
             "workflowStateEId",
         ]
         for field in fields:
-            value = self._remove_whitespace(application.get(field))
+            value = self._remove_whitespace(application.get(field, ""))
             setattr(self, field, value)
 
     def _extract_job_fields(self):
@@ -122,8 +122,11 @@ class Candidate:
             "shared_with_sf_bay",
             "shared_with_prize",
         ]
+        for f in fields:
+            setattr(self, f, "")
+
         for field in custom_fields:
             key = field.get("fieldCode")
-            value = self._remove_whitespace(field.get("value"))
+            value = self._remove_whitespace(field.get("value", ""))
             if key in fields:
                 setattr(self, key, value)

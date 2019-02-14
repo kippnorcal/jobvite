@@ -11,7 +11,7 @@ class Candidate:
         if s is not None:
             s = str(s)
             s = s.strip().strip("\n").strip("\t")
-            s = s.replace("\n", "").replace("\t", "")
+            s = s.replace("\n", " ").replace("\t", " ")
         return s
 
     def _convert_datetime(self, unix_timestamp):

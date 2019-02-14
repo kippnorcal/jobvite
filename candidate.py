@@ -1,4 +1,4 @@
-import re
+from datetime import datetime
 
 
 class Candidate:
@@ -13,6 +13,12 @@ class Candidate:
             s = s.strip().strip("\n").strip("\t")
             s = s.replace("\n", "").replace("\t", "")
         return s
+
+    def _convert_datetime(self, unix_timestamp):
+        timestamp_without_miliseconds = unix_timestamp / 1000.0
+        return datetime.fromtimestamp(timestamp_without_miliseconds).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
 
     def _extract_candidate_info(self):
         self._extract_candidate_fields()
@@ -41,11 +47,13 @@ class Candidate:
     def _extract_application_fields(self):
         application = self.candidate.get("application")
         self.application_eid = application.get("eId")
+        self.lastUpdatedDate = self._convert_datetime(
+            application.get("lastUpdatedDate")
+        )
         fields = [
             "disposition",
             "gender",
             "jobviteChannel",
-            "lastUpdatedDate",
             "race",
             "sourceType",
             "veteranStatus",

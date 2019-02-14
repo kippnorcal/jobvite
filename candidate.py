@@ -97,7 +97,6 @@ class Candidate:
             "do_you_speak_a_language_other_than_english_or_spanish",
             "please_specify_which_language",
             "application_owner",
-            "paycom_job_title",
             "pay_type",
             "fte",
             "assigned_work_location",

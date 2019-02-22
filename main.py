@@ -53,6 +53,12 @@ def write_csv(dataframe, delimiter=","):
     logging.info(f"Wrote {len(dataframe.index)} records to {filename}")
 
 
+def exec_sproc(schema, stored_procedure):
+    sql_str = f"EXEC {schema}.{stored_procedure}"
+    command = sa.text(sql_str).execute_options(autocommit=True)
+    engine.execute(command)
+
+
 @elapsed
 def main():
     try:
@@ -75,11 +81,29 @@ def main():
             "please_indicate_the_specific_subject_areas_you_would_like_to_teach": "subjectPref",
             "please_specify_which_language": "otherLanguageSpoken",
             "when_are_you_available_to_begin_work": "workStartAvailability",
+            "shared_with_kipp_bayview_academy_middle": "sharedBayview",
+            "shared_with_kipp_bayview_elementary": "sharedBayviewES",
+            "shared_with_kipp_bridge__middle": "sharedBridgeUpper",
+            "shared_with_kipp_excelencia": "sharedExcelencia",
+            "shared_with_kipp_heartwood": "sharedHeartwood",
+            "shared_with_kipp_heritage": "sharedHeritage",
+            "shared_with_kipp_king": "sharedKing",
+            "shared_with_sf_college_prep": "sharedSFCP",
+            "shared_with_ksjc": "sharedSJC",
+            "shared_with_summit": "sharedSummit",
+            "shared_with_valiant": "sharedValiant",
+            "shared_with_kipp_bridge__elementary": "sharedBridgeLower",
+            "shared_with_navigate": "sharedNavigate",
+            "shared_with_sf_bay": "sharedSFBay",
+            "shared_with_prize": "sharedPrize",
         }
         df.rename(columns=column_map, inplace=True)
+        df.index.rename("id", inplace=True)
         df.to_sql(
-            "jobvite_cache", engine, schema="custom", if_exists="append", index=False
+            "jobvite_cache", engine, schema="custom", if_exists="replace", index=True
         )
+        # TODO: Create SQL stored procedure
+        # exec_sproc("custom", "sproc_merge_jobvite")
 
     except Exception as e:
         logging.critical(e)

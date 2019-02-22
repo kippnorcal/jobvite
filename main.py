@@ -6,13 +6,15 @@ import sys
 import urllib
 import jobvite
 from timer import elapsed
+import pyodbc
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text as sa_text
 from candidate import Candidate
 
 # Connect to Database
-driver = "{ODBC Driver 13 for SQL Server}"
+drivers = pyodbc.drivers()
+driver = "{" + drivers[0] + "}"
 ip = os.getenv("SERVER_IP")
 db = os.getenv("DB")
 user = os.getenv("USER")

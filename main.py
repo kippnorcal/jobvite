@@ -11,6 +11,7 @@ from sqlalchemy.sql import text as sa_text
 from candidate import Candidate
 import db
 import jobvite
+import mailer
 from timer import elapsed
 
 
@@ -59,9 +60,11 @@ def main():
         connection.insert_into("jobvite_test")
         # TODO: Create SQL stored procedure
         # exec_sproc("custom", "sproc_merge_jobvite")
+        mailer.notify(len(df.index))
 
     except Exception as e:
-        logging.critical(e)
+        logging.exception(e)
+        mailer.notify(error=True, error_message=repr(e))
 
 
 if __name__ == "__main__":

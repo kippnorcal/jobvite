@@ -1,4 +1,4 @@
-import os
+from os import getenv
 import urllib
 import pandas as pd
 import pyodbc
@@ -9,10 +9,10 @@ from data_config import column_map
 
 class Connection:
     def __init__(self, schema, df):
-        ip = os.getenv("SERVER_IP")
-        db = os.getenv("DB")
-        user = os.getenv("USER")
-        pwd = os.getenv("PWD")
+        ip = getenv("SERVER_IP")
+        db = getenv("DB")
+        user = getenv("USER")
+        pwd = getenv("PWD")
         driver = f"{{{pyodbc.drivers()[0]}}}"
         params = urllib.parse.quote_plus(
             f"DRIVER={driver};SERVER={ip};DATABASE={db};UID={user};PWD={pwd}"

@@ -54,11 +54,11 @@ class Candidate:
 
     def _extract_custom_fields(self):
         custom_fields = self.candidate.get("application").get("customField")
-        for f in data_config.custom_fields:
+        for f in data_config.column_map.keys():
             setattr(self, f, "")
 
         for field in custom_fields:
             key = field.get("fieldCode")
             value = self._remove_whitespace(field.get("value", ""))
-            if key in data_config.custom_fields:
+            if key in data_config.column_map.keys():
                 setattr(self, key, value)

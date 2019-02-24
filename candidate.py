@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytz
 import data_config
 
 
@@ -17,7 +18,8 @@ class Candidate:
 
     def _convert_datetime(self, unix_timestamp):
         timestamp_without_miliseconds = unix_timestamp / 1000.0
-        return datetime.fromtimestamp(timestamp_without_miliseconds).strftime(
+        tz = pytz.timezone("America/Los_Angeles")
+        return datetime.fromtimestamp(timestamp_without_miliseconds, tz).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
 

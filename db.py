@@ -23,8 +23,8 @@ class Connection:
 
     def exec_sproc(self, stored_procedure):
         sql_str = f"EXEC {self.schema}.{stored_procedure}"
-        command = sa.text(sql_str).execute_options(autocommit=True)
-        self.engine.execute(command)
+        command = sa_text(sql_str).execution_options(autocommit=True)
+        return self.engine.execute(command)
 
     def _rename_columns(self):
         self.df.rename(columns=column_map, inplace=True)

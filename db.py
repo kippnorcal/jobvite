@@ -8,7 +8,7 @@ from data_config import column_map
 
 
 class Connection:
-    def __init__(self, schema, df):
+    def __init__(self, schema="custom"):
         ip = getenv("SERVER_IP")
         db = getenv("DB")
         user = getenv("USER")
@@ -19,7 +19,6 @@ class Connection:
         )
         self.engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
         self.schema = schema
-        self.df = df
 
     def exec_sproc(self, stored_procedure):
         sql_str = f"EXEC {self.schema}.{stored_procedure}"
@@ -30,7 +29,8 @@ class Connection:
         self.df.rename(columns=column_map, inplace=True)
         self.df.index.rename("id", inplace=True)
 
-    def insert_into(self, table):
+    def insert_into(self, table, df):
+        self.df = df
         self._rename_columns()
         self.df.to_sql(
             table, self.engine, schema=self.schema, if_exists="replace", index=True

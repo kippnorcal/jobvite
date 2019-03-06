@@ -48,10 +48,9 @@ def main():
     try:
         candidates = get_candidates()
         df = pd.DataFrame(candidates)
-        connection = db.Connection("custom", df)
-        connection.insert_into("jobvite_test")
-        # TODO: Create SQL stored procedure
-        # connection.exec_sproc("custom", "sproc_merge_jobvite")
+        connection = db.Connection()
+        connection.insert_into("jobvite_cache", df)
+        connection.exec_sproc("sproc_Jobvite_MergeExtract")
 
     except Exception as e:
         logging.critical(e)

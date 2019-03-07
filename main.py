@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 import logging
 import sys
+import traceback
 import urllib
 import pyodbc
 import pandas as pd
@@ -10,7 +11,7 @@ from sqlalchemy.sql import text as sa_text
 from candidate import Candidate
 import db
 import jobvite
-import mailer
+from mailer import Mailer
 from timer import elapsed
 
 
@@ -52,11 +53,14 @@ def main():
         connection = db.Connection()
         connection.insert_into("jobvite_cache", df)
         connection.exec_sproc("sproc_Jobvite_MergeExtract")
-        mailer.notify(len(df.index))
+        mailer = Mailer(count=len(df.index))
+        mailer.notify()
 
     except Exception as e:
         logging.exception(e)
-        mailer.notify(error=True, error_message=repr(e))
+        stack_trace = traceback.format_exc()
+        mailer = Mailer(success=False, error_message=stack_trace)
+        mailer.notify()
 
 
 if __name__ == "__main__":

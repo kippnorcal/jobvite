@@ -1,12 +1,16 @@
 from datetime import datetime, timedelta
 import json
 import logging
-import os
 import sys
+import urllib
+import pyodbc
+import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text as sa_text
+from candidate import Candidate
+import db
 import jobvite
 from timer import elapsed
-import pandas as pd
-from candidate import Candidate
 
 
 logging.basicConfig(
@@ -44,7 +48,9 @@ def main():
     try:
         candidates = get_candidates()
         df = pd.DataFrame(candidates)
-        write_csv(df)
+        connection = db.Connection()
+        connection.insert_into("jobvite_cache", df)
+        connection.exec_sproc("sproc_Jobvite_MergeExtract")
 
     except Exception as e:
         logging.critical(e)

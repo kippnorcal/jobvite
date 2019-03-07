@@ -7,6 +7,8 @@ name = "pypi"
 requests = "*"
 pytest = "*"
 pandas = "*"
+sqlalchemy = "*"
+pyodbc = "*"
 
 [dev-packages]
 

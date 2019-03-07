@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import json
 import logging
-import os
 import sys
 import urllib
 import pyodbc
@@ -45,21 +44,14 @@ def write_csv(dataframe, delimiter=","):
     logging.info(f"Wrote {len(dataframe.index)} records to {filename}")
 
 
-def exec_sproc(schema, stored_procedure):
-    sql_str = f"EXEC {schema}.{stored_procedure}"
-    command = sa.text(sql_str).execute_options(autocommit=True)
-    engine.execute(command)
-
-
 @elapsed
 def main():
     try:
         candidates = get_candidates()
         df = pd.DataFrame(candidates)
-        connection = db.Connection("custom", df)
-        connection.insert_into("jobvite_test")
-        # TODO: Create SQL stored procedure
-        # exec_sproc("custom", "sproc_merge_jobvite")
+        connection = db.Connection()
+        connection.insert_into("jobvite_cache", df)
+        connection.exec_sproc("sproc_Jobvite_MergeExtract")
         mailer.notify(len(df.index))
 
     except Exception as e:

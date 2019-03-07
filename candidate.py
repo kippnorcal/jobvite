@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytz
 import data_config
 
 
@@ -17,7 +18,8 @@ class Candidate:
 
     def _convert_datetime(self, unix_timestamp):
         timestamp_without_miliseconds = unix_timestamp / 1000.0
-        return datetime.fromtimestamp(timestamp_without_miliseconds).strftime(
+        tz = pytz.timezone("America/Los_Angeles")
+        return datetime.fromtimestamp(timestamp_without_miliseconds, tz).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
 
@@ -52,11 +54,11 @@ class Candidate:
 
     def _extract_custom_fields(self):
         custom_fields = self.candidate.get("application").get("customField")
-        for f in data_config.custom_fields:
+        for f in data_config.column_map.keys():
             setattr(self, f, "")
 
         for field in custom_fields:
             key = field.get("fieldCode")
             value = self._remove_whitespace(field.get("value", ""))
-            if key in data_config.custom_fields:
+            if key in data_config.column_map.keys():
                 setattr(self, key, value)

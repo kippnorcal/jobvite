@@ -14,27 +14,27 @@ def data_frame():
         return DataFrame(candidate)
 
 
-@pytest.fixture(scope="module")
-def connection(data_frame):
-    return Connection("custom", data_frame)
-
-
-def test_connection(connection, data_frame):
+def test_connection():
+    connection = Connection()
     assert connection.schema == "custom"
-    assert data_frame.equals(connection.df)
+    connection = Connection("dbo")
+    assert connection.schema == "dbo"
 
 
-def test_exec_sproc(connection, monkeypatch):
+def test_exec_sproc(monkeypatch):
     def mock_execute(command):
         return command
 
+    connection = Connection()
     monkeypatch.setattr(connection.engine, "execute", mock_execute)
     sproc_call = connection.exec_sproc("sproc_do_a_thing")
     assert type(sproc_call) == TextClause
     assert str(sproc_call) == "EXEC custom.sproc_do_a_thing"
 
 
-def test__rename_columns(connection, data_frame):
+def test__rename_columns(data_frame):
+    connection = Connection()
+    connection.df = data_frame
     df_before = list(data_frame)
     assert data_frame.index.name != "id"
     connection._rename_columns()

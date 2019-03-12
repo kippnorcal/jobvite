@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 import logging
 import sys
+import traceback
 import urllib
 import pyodbc
 import pandas as pd
@@ -10,6 +11,7 @@ from sqlalchemy.sql import text as sa_text
 from candidate import Candidate
 import db
 import jobvite
+from mailer import Mailer
 from timer import elapsed
 
 
@@ -46,14 +48,18 @@ def write_csv(dataframe, delimiter=","):
 @elapsed
 def main():
     try:
+        mailer = Mailer()
         candidates = get_candidates()
         df = pd.DataFrame(candidates)
         connection = db.Connection()
         connection.insert_into("jobvite_cache", df)
         connection.exec_sproc("sproc_Jobvite_MergeExtract")
+        mailer.notify(count=len(df.index))
 
     except Exception as e:
-        logging.critical(e)
+        logging.exception(e)
+        stack_trace = traceback.format_exc()
+        mailer.notify(success=False, error_message=stack_trace)
 
 
 if __name__ == "__main__":

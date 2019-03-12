@@ -28,8 +28,8 @@ def mock_sendmail(monkeypatch, inbox):
 
 def test_mailer_success(inbox):
     inbox.clear()
-    success = Mailer(1)
-    success.notify()
+    success = Mailer()
+    success.notify(count=1)
     assert len(inbox) == 1
     assert inbox[0]["to"] == getenv("SLACK_EMAIL")
     assert "Success" in inbox[0]["message"]
@@ -38,8 +38,8 @@ def test_mailer_success(inbox):
 
 def test_mailer_error(inbox):
     inbox.clear()
-    error = Mailer(success=False, error_message="it failed")
-    error.notify()
+    error = Mailer()
+    error.notify(success=False, error_message="it failed")
     assert len(inbox) == 1
     assert inbox[0]["to"] == getenv("SLACK_EMAIL")
     assert "Error" in inbox[0]["message"]

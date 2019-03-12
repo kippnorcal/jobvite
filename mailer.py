@@ -4,16 +4,13 @@ from email.mime.text import MIMEText
 
 
 class Mailer:
-    def __init__(self, count=None, success=True, error_message=None):
+    def __init__(self):
         self.user = getenv("GMAIL_USER")
         self.password = getenv("GMAIL_PWD")
         self.slack_email = getenv("SLACK_EMAIL")
         self.server = SMTP_SSL("smtp.gmail.com", 465)
         self.from_address = "KIPP Bay Area Job Notification"
         self.to_address = "databot"
-        self.count = count
-        self.success = success
-        self.error_message = error_message
 
     def _subject_line(self):
         subject_type = "Success" if self.success else "Error"
@@ -32,7 +29,10 @@ class Mailer:
         msg["To"] = self.to_address
         return msg.as_string()
 
-    def notify(self):
+    def notify(self, count=None, success=True, error_message=None):
+        self.count = count
+        self.success = success
+        self.error_message = error_message
         with self.server as s:
             s.login(self.user, self.password)
             msg = self._message()

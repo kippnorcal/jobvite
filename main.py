@@ -48,19 +48,18 @@ def write_csv(dataframe, delimiter=","):
 @elapsed
 def main():
     try:
+        mailer = Mailer()
         candidates = get_candidates()
         df = pd.DataFrame(candidates)
         connection = db.Connection()
         connection.insert_into("jobvite_cache", df)
         connection.exec_sproc("sproc_Jobvite_MergeExtract")
-        mailer = Mailer(count=len(df.index))
-        mailer.notify()
+        mailer.notify(count=len(df.index))
 
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
-        mailer = Mailer(success=False, error_message=stack_trace)
-        mailer.notify()
+        mailer.notify(success=False, error_message=stack_trace)
 
 
 if __name__ == "__main__":

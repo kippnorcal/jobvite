@@ -17,6 +17,7 @@ application_fields = [
     "jobviteChannel",
     "race",
     "sourceType",
+    "source",
     "veteranStatus",
     "workflowState",
     "workflowStateEId",

@@ -51,8 +51,14 @@ $ docker build -t jobvite .
 ```
 JOBVITE_API_KEY=
 JOBVITE_API_SECRET=
+GMAIL_USER=
+GMAIL_PWD=
+SLACK_EMAIL=
+SERVER_IP=
+DB=
+USER=
+PWD=
 ```
-
 
 ### Running the Job
 
@@ -61,6 +67,13 @@ Run in detached mode (runs as background process) with the output folder mapped 
 ```
 $ docker run -d -v ${PWD}/output:/app/output --name=jobvite jobvite 
 ```
+
+Optionally, you can run it with a date argument to pull more than just yesterday's candidates.
+
+```
+$ docker run -d -v ${PWD}/output:/app/output --name=jobvite jobvite "2019-03-14"
+```
+
 
 ### Testing
 

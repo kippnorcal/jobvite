@@ -79,6 +79,7 @@ CREATE TABLE [custom].[jobvite_full](
 	[sharedSummit] [varchar](max) NULL,
 	[sharedValiant] [varchar](max) NULL,
 	[sourceType] [varchar](max) NULL,
+	[source] [varchar](max) NULL,
 	[state] [varchar](max) NULL,
 	[title] [varchar](max) NULL,
 	[veteranStatus] [varchar](max) NULL,

@@ -32,7 +32,11 @@ job_fields = [
     "title",
 ]
 
-column_map = {
+custom_job_fields = {
+    "exempt_status":"exempt_status",
+}
+
+custom_application_fields = {
     "are_you_a_former_or_current_kipp_employee": "formerOrCurrentKIPP",
     "are_you_an_alumnus_of_a_kipp_school": "KIPPAlumni",
     "do_you_hold_a_valid_teacher_certification": "validTeacherCert",
@@ -72,4 +76,7 @@ column_map = {
     "paycom_job_title": "paycom_job_title",
     "equipment_needed": "equipment_needed",
     "likelihood_of_hire": "likelihood_of_hire",
+    "assigned_pay_location": "assigned_pay_location",
+    "offer_1": "offer_1",
+    "offer_2": "offer_2",
 }

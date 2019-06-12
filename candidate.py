@@ -27,7 +27,8 @@ class Candidate:
         self._extract_candidate_fields()
         self._extract_application_fields()
         self._extract_job_fields()
-        self._extract_custom_fields()
+        self._extract_custom_application_fields()
+        self._extract_custom_job_fields()
 
     def _extract_candidate_fields(self):
         self.candidate_eid = self.candidate.get("eId")
@@ -52,13 +53,25 @@ class Candidate:
             value = self._remove_whitespace(job.get(field))
             setattr(self, field, value)
 
-    def _extract_custom_fields(self):
-        custom_fields = self.candidate.get("application").get("customField")
-        for f in data_config.column_map.keys():
+    def _extract_custom_job_fields(self):
+        custom_job_fields = self.candidate.get("application").get("job").get("customField")
+        for f in data_config.custom_job_fields.keys():
+            setattr(self, f, "")
+            
+        if custom_job_fields is not None:
+            for field in custom_job_fields:
+                key = field.get("fieldCode")
+                value = self._remove_whitespace(field.get("value", ""))
+                if key in data_config.custom_job_fields.keys():
+                    setattr(self, key, value)
+
+    def _extract_custom_application_fields(self):
+        custom_application_fields = self.candidate.get("application").get("customField")
+        for f in data_config.custom_application_fields.keys():
             setattr(self, f, "")
 
-        for field in custom_fields:
+        for field in custom_application_fields:
             key = field.get("fieldCode")
             value = self._remove_whitespace(field.get("value", ""))
-            if key in data_config.column_map.keys():
+            if key in data_config.custom_application_fields.keys():
                 setattr(self, key, value)

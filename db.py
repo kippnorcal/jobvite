@@ -4,7 +4,7 @@ import pandas as pd
 import pyodbc
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text as sa_text
-from data_config import column_map
+from data_config import custom_application_fields
 
 
 class Connection:
@@ -26,7 +26,7 @@ class Connection:
         return self.engine.execute(command)
 
     def _rename_columns(self):
-        self.df.rename(columns=column_map, inplace=True)
+        self.df.rename(columns=custom_application_fields, inplace=True)
         self.df.index.rename("id", inplace=True)
 
     def insert_into(self, table, df):

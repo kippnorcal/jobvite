@@ -26,11 +26,13 @@ class Connection:
         return self.engine.execute(command)
 
     def _rename_columns(self):
-        self.df.rename(columns=custom_application_fields, inplace=True)
+        if self.table == "jobvite_cache":
+            self.df.rename(columns=custom_application_fields, inplace=True)
         self.df.index.rename("id", inplace=True)
 
     def insert_into(self, table, df):
         self.df = df
+        self.table = table
         self._rename_columns()
         self.df.to_sql(
             table, self.engine, schema=self.schema, if_exists="replace", index=True

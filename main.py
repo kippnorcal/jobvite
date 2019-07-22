@@ -60,12 +60,16 @@ def main():
     try:
         mailer = Mailer()
         # candidates = get_candidates()
+        # candidates_df = pd.DataFrame(candidates)
         jobs = get_jobs()
-        # df = pd.DataFrame(candidates)
-        # connection = db.Connection()
-        # connection.insert_into("jobvite_cache", df)
+        jobs_df = pd.DataFrame(jobs)
+
+        connection = db.Connection()
+        # connection.insert_into("jobvite_cache", candidates_df)
         # connection.exec_sproc("sproc_Jobvite_MergeExtract")
-        # mailer.notify(count=len(df.index))
+        connection.insert_into("jobvite_jobs_cache",jobs_df)
+        connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract")
+        # mailer.notify(count=len(candidates_df.index))
 
     except Exception as e:
         logging.exception(e)

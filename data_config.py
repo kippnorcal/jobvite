@@ -36,6 +36,7 @@ requisition_fields = [
     "category",
     "eId",
     "requisitionId",
+    "title",
 ]
 
 custom_job_fields = {

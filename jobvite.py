@@ -31,6 +31,10 @@ class JobviteAPI:
     def candidates_endpoint(self):
         return f"{self.ENDPOINT}/candidate"
 
+    @property
+    def jobs_endpoint(self):
+        return f"{self.ENDPOINT}/job"
+
     def _get(self, endpoint, **params):
         params = params.copy()
         self.logger.debug(
@@ -46,6 +50,45 @@ class JobviteAPI:
             return response
         else:
             response.raise_for_status()
+
+    def jobs(self, batch_size=100, limit=None, **params):
+        """Fetch jobs from Jobvite API.
+
+        This API will stream jobs from the Jobvite API as a generator, making multiple requests until all
+        job meeting the filters are returned.
+
+        Args:
+            batch_size (int): number of jobs to fetch in each request.
+            limit (int): stop fetching jobs after a limit is reached. this is primarily for testing.
+            **params: additional args that may be passed into the Jobvite API.
+
+        Yields:
+            dict: job JSON converted to objects.
+
+        Examples:
+            >>> jv.jobs(batch_size=500, modified_date='2018-12-20')
+            >>> jv.jobs(limit=30)
+
+        Todo:
+            * implement wflowstate filter (if necessary).
+            * Investigate datetime filters.
+        """
+        params = params.copy()
+
+        params["count"] = batch_size
+        if limit and limit < batch_size:
+            params["count"] = limit
+
+        if batch_size > 500:
+            raise ValueError('Batch size cannot be greater than "500"')
+
+        return self._stream(
+            self.jobs_endpoint,
+            params,
+            batch_size=batch_size,
+            limit=limit,
+            items_key="requisitions",
+        )
 
     def candidates(self, modified_date=None, batch_size=100, limit=None, **params):
         """Fetch candidates from Jobvite API.

@@ -9,6 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text as sa_text
 from candidate import Candidate
+from job import Job
 import db
 import jobvite
 from mailer import Mailer
@@ -38,6 +39,15 @@ def get_candidates():
     return candidates
 
 
+def get_jobs():
+    results = jobvite.JobviteAPI().jobs()
+    jobs = []
+    for result in results:
+        jobs.append(Job(result).__dict__)
+    logging.info(f"Retrieved {len(jobs)} job records from Jobvite API")
+    return jobs
+
+
 def write_csv(dataframe, delimiter=","):
     datestamp = datetime.now().strftime("%Y%m%d%I%M")
     filename = f"output/candidates_{datestamp}.csv"
@@ -49,17 +59,18 @@ def write_csv(dataframe, delimiter=","):
 def main():
     try:
         mailer = Mailer()
-        candidates = get_candidates()
-        df = pd.DataFrame(candidates)
-        connection = db.Connection()
-        connection.insert_into("jobvite_cache", df)
-        connection.exec_sproc("sproc_Jobvite_MergeExtract")
-        mailer.notify(count=len(df.index))
+        # candidates = get_candidates()
+        jobs = get_jobs()
+        # df = pd.DataFrame(candidates)
+        # connection = db.Connection()
+        # connection.insert_into("jobvite_cache", df)
+        # connection.exec_sproc("sproc_Jobvite_MergeExtract")
+        # mailer.notify(count=len(df.index))
 
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
-        mailer.notify(success=False, error_message=stack_trace)
+        # mailer.notify(success=False, error_message=stack_trace)
 
 
 if __name__ == "__main__":

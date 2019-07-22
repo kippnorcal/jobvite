@@ -59,22 +59,22 @@ def write_csv(dataframe, delimiter=","):
 def main():
     try:
         mailer = Mailer()
-        # candidates = get_candidates()
-        # candidates_df = pd.DataFrame(candidates)
+        candidates = get_candidates()
+        candidates_df = pd.DataFrame(candidates)
         jobs = get_jobs()
         jobs_df = pd.DataFrame(jobs)
 
         connection = db.Connection()
-        # connection.insert_into("jobvite_cache", candidates_df)
-        # connection.exec_sproc("sproc_Jobvite_MergeExtract")
+        connection.insert_into("jobvite_cache", candidates_df)
+        connection.exec_sproc("sproc_Jobvite_MergeExtract")
         connection.insert_into("jobvite_jobs_cache",jobs_df)
         connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract")
-        # mailer.notify(count=len(candidates_df.index))
+        mailer.notify(candidates_count=len(candidates_df.index),jobs_count=len(jobs_df.index))
 
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
-        # mailer.notify(success=False, error_message=stack_trace)
+        mailer.notify(success=False, error_message=stack_trace)
 
 
 if __name__ == "__main__":

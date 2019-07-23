@@ -117,6 +117,7 @@ SET jvfull.[workflowState] = cache.[workflowState]
            ,jvfull.[sourceType]= cache.[sourceType]
            ,jvfull.[source]= cache.[source]
            ,jvfull.[state]= cache.[state]
+           ,jvfull.[startDate]= cache.[startDate]
            ,jvfull.[title]= cache.[title]
            ,jvfull.[veteranStatus]= cache.[veteranStatus]
            ,jvfull.[workStartAvailability]= cache.[workStartAvailability]
@@ -133,7 +134,7 @@ INSERT ([application_eid],[candidate_eid],[job_eid],[workflowState],[workflowSta
 ,[location],[pay_type],[paycom_job_title],[gradePref],[subjectPref],[offer_1],[offer_2],[otherLanguageSpoken],[postalCode]
 ,[postingType],[race],[requisitionId],[sharedBayview],[sharedBayviewES],[sharedBridgeLower],[sharedBridgeUpper]
 ,[sharedExcelencia],[sharedHeartwood],[sharedHeritage],[sharedKing],[sharedSJC],[sharedNavigate],[sharedPrize]
-,[sharedSFBay],[sharedSFCP],[sharedSummit],[sharedValiant],[sourceType],[source],[state],[title],[veteranStatus]
+,[sharedSFBay],[sharedSFCP],[sharedSummit],[sharedValiant],[sourceType],[source],[state],[startDate],[title],[veteranStatus]
 ,[workStartAvailability],[workStatus],[LastMergedDate])
 VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[workflowState],cache.[workflowStateEId],cache.[address],cache.[address2]
 ,cache.[application_owner],cache.[formerOrCurrentKIPP],cache.[KIPPAlumni],cache.[assigned_pay_location],cache.[assigned_work_location],cache.[city],cache.[country],cache.[credentialing_score]
@@ -143,7 +144,7 @@ VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[wor
 ,cache.[location],cache.[pay_type],cache.[paycom_job_title],cache.[gradePref],cache.[subjectPref],cache.[offer_1],cache.[offer_2],cache.[otherLanguageSpoken],cache.[postalCode]
 ,cache.[postingType],cache.[race],cache.[requisitionId],cache.[sharedBayview],cache.[sharedBayviewES],cache.[sharedBridgeLower],cache.[sharedBridgeUpper]
 ,cache.[sharedExcelencia],cache.[sharedHeartwood],cache.[sharedHeritage],cache.[sharedKing],cache.[sharedSJC],cache.[sharedNavigate],cache.[sharedPrize]
-,cache.[sharedSFBay],cache.[sharedSFCP],cache.[sharedSummit],cache.[sharedValiant],cache.[sourceType],cache.[source],cache.[state],cache.[title],cache.[veteranStatus]
+,cache.[sharedSFBay],cache.[sharedSFCP],cache.[sharedSummit],cache.[sharedValiant],cache.[sourceType],cache.[source],cache.[state],cache.[startDate],cache.[title],cache.[veteranStatus]
 ,cache.[workStartAvailability],cache.[workStatus],GETDATE())
 
 /*Probably going to do nothing

@@ -32,13 +32,6 @@ job_fields = [
     "title",
 ]
 
-requisition_fields = [
-    "category",
-    "eId",
-    "requisitionId",
-    "title",
-]
-
 custom_job_fields = {
     "exempt_status":"exempt_status",
 }

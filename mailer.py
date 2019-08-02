@@ -18,7 +18,7 @@ class Mailer:
 
     def _body_text(self):
         if self.success:
-            return f"The Jobvite connector loaded {self.candidates_count} candidate and {self.jobs_count} job changes today."
+            return f"The Jobvite connector loaded {self.count} candidate changes today."
         else:
             return f"The Jobvite connector encountered an error:\n{self.error_message}"
 
@@ -29,9 +29,8 @@ class Mailer:
         msg["To"] = self.to_address
         return msg.as_string()
 
-    def notify(self, candidates_count=None, jobs_count=None, success=True, error_message=None):
-        self.candidates_count = candidates_count
-        self.jobs_count = jobs_count
+    def notify(self, count=None, success=True, error_message=None):
+        self.count = count
         self.success = success
         self.error_message = error_message
         with self.server as s:

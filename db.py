@@ -35,5 +35,5 @@ class Connection:
         self.table = table
         self._rename_columns()
         self.df.to_sql(
-            table, self.engine, schema=self.schema, if_exists="replace", index=True
+            self.table, self.engine, schema=self.schema, if_exists="replace", index=True
         )

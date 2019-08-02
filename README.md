@@ -1,5 +1,5 @@
 # jobvite_connector
-An ETL service job for staging Jobvite candidate data
+An ETL service job for staging Jobvite candidate and job data
 
 ## Dependencies:
 

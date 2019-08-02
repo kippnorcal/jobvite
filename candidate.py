@@ -42,6 +42,10 @@ class Candidate:
         self.lastUpdatedDate = self._convert_datetime(
             application.get("lastUpdatedDate")
         )
+        if application.get("startDate") is not None:
+            self.startDate = self._convert_datetime(
+                application.get("startDate")
+            )
         for field in data_config.application_fields:
             value = self._remove_whitespace(application.get(field, ""))
             setattr(self, field, value)

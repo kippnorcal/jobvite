@@ -9,6 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text as sa_text
 from candidate import Candidate
+from job import Job
 import db
 import jobvite
 from mailer import Mailer
@@ -38,6 +39,15 @@ def get_candidates():
     return candidates
 
 
+def get_jobs():
+    results = jobvite.JobviteAPI().jobs()
+    jobs = []
+    for result in results:
+        jobs.append(Job(result).__dict__)
+    logging.info(f"Retrieved {len(jobs)} job records from Jobvite API")
+    return jobs
+
+
 def write_csv(dataframe, delimiter=","):
     datestamp = datetime.now().strftime("%Y%m%d%I%M")
     filename = f"output/candidates_{datestamp}.csv"
@@ -50,11 +60,16 @@ def main():
     try:
         mailer = Mailer()
         candidates = get_candidates()
-        df = pd.DataFrame(candidates)
+        candidates_df = pd.DataFrame(candidates)
+        jobs = get_jobs()
+        jobs_df = pd.DataFrame(jobs)
+
         connection = db.Connection()
-        connection.insert_into("jobvite_cache", df)
+        connection.insert_into("jobvite_cache", candidates_df)
         connection.exec_sproc("sproc_Jobvite_MergeExtract")
-        mailer.notify(count=len(df.index))
+        connection.insert_into("jobvite_jobs_cache",jobs_df)
+        connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract")
+        mailer.notify(candidates_count=len(candidates_df.index),jobs_count=len(jobs_df.index))
 
     except Exception as e:
         logging.exception(e)

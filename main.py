@@ -70,6 +70,7 @@ def main():
         connection.insert_into("jobvite_jobs_cache",jobs_df)
         connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract")
         mailer.notify(candidates_count=len(candidates_df.index),jobs_count=len(jobs_df.index))
+
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()

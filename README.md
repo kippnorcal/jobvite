@@ -62,16 +62,16 @@ PWD=
 
 ### Running the Job
 
-Run in detached mode (runs as background process) with the output folder mapped to the host directory.
+Run for yesterdays candidates.
 
 ```
-$ docker run -d -v ${PWD}/output:/app/output --name=jobvite jobvite 
+$ docker run -it jobvite 
 ```
 
-Optionally, you can run it with a date argument to pull more than just yesterday's candidates.
+Optionally, you can run it with start/end date arguments to pull more than just yesterday's candidates.
 
 ```
-$ docker run -d -v ${PWD}/output:/app/output --name=jobvite jobvite "2019-03-14"
+$ docker run -it jobivte --startdate='2019-07-01' --enddate='2019-07-31'
 ```
 
 

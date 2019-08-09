@@ -14,6 +14,7 @@ import db
 import jobvite
 from mailer import Mailer
 from timer import elapsed
+import argparse
 
 
 logging.basicConfig(
@@ -23,15 +24,15 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %I:%M:%S%p",
 )
 
-
-if len(sys.argv) > 1:
-    MODIFIED_DATE = sys.argv[1]
-else:
-    MODIFIED_DATE = (datetime.now() - timedelta(1)).strftime("%Y-%m-%d")
-
+parser = argparse.ArgumentParser(description='Accept start and end date for date window')
+parser.add_argument('--startdate', help="Start Date - format YYYY-MM-DD", default=(datetime.now() - timedelta(1)).strftime("%Y-%m-%d"))
+parser.add_argument('--enddate', help="End Date - format YYYY-MM-DD", default=(datetime.now()).strftime("%Y-%m-%d"))
+args = parser.parse_args()
+START_DATE = args.startdate
+END_DATE = args.enddate
 
 def get_candidates():
-    results = jobvite.JobviteAPI().candidates(modified_date=MODIFIED_DATE)
+    results = jobvite.JobviteAPI().candidates(start_date=START_DATE,end_date=END_DATE)
     candidates = []
     for result in results:
         candidates.append(Candidate(result).__dict__)

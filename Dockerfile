@@ -11,4 +11,4 @@ RUN pip install pipenv
 RUN pipenv install
 RUN yes | dpkg -i msodbcsql17_17.2.0.1-1_amd64.deb
 COPY ./*.py /app/
-CMD ["pipenv", "run", "python", "main.py"]
+ENTRYPOINT ["pipenv", "run", "python", "main.py"]

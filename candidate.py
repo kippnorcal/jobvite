@@ -46,6 +46,8 @@ class Candidate:
             self.startDate = self._convert_datetime(
                 application.get("startDate")
             )
+        else:
+            self.startDate = None
         for field in data_config.application_fields:
             value = self._remove_whitespace(application.get(field, ""))
             setattr(self, field, value)

@@ -66,7 +66,7 @@ class JobviteAPI:
             dict: job JSON converted to objects.
 
         Examples:
-            >>> jv.jobs(batch_size=500, modified_date='2018-12-20')
+            >>> jv.jobs(batch_size=500, start_date='2018-12-20')
             >>> jv.jobs(limit=30)
 
         Todo:
@@ -90,14 +90,15 @@ class JobviteAPI:
             items_key="requisitions",
         )
 
-    def candidates(self, modified_date=None, batch_size=100, limit=None, **params):
+    def candidates(self, start_date=None, end_date=None, batch_size=100, limit=None, **params):
         """Fetch candidates from Jobvite API.
 
         This API will stream candidates from the Jobvite API as a generator, making multiple requests until all
         candidates meeting the filters are returned.
 
         Args:
-            modified_date (str): filter results by modified date >= 'yyyy-MM-dd'.
+            start_date (str): filter results by start date >= 'yyyy-MM-dd'.
+            end_date (str): filter results by end date <= 'yyyy-MM-dd'.
             batch_size (int): number of candidates to fetch in each request.
             limit (int): stop fetching candidates after a limit is reached. this is primarily for testing.
             **params: additional args that may be passed into the Jobvite API.
@@ -106,7 +107,7 @@ class JobviteAPI:
             dict: candidate JSON converted to objects.
 
         Examples:
-            >>> jv.candidates(batch_size=500, modified_date='2018-12-20')
+            >>> jv.candidates(batch_size=500, start_date='2018-12-20', end_date='2019-03-30')
             >>> jv.candidates(limit=30)
 
         Todo:
@@ -114,10 +115,9 @@ class JobviteAPI:
             * Investigate datetime filters.
         """
         params = params.copy()
-        if modified_date:
-            params["datestart"] = modified_date
-            params["dateFormat"] = "yyyy-MM-dd"
-
+        params["datestart"] = start_date
+        params["dateend"] = end_date
+        params["dateFormat"] = "yyyy-MM-dd"
         params["count"] = batch_size
         if limit and limit < batch_size:
             params["count"] = limit

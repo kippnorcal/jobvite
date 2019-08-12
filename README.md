@@ -69,7 +69,6 @@ $ docker run -it jobvite
 ```
 
 Optionally, you can run it with start/end date arguments to pull more than just yesterday's candidates.
-
 ```
 $ docker run -it jobvite --startdate='2019-07-01' --enddate='2019-07-31'
 ```

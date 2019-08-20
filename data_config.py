@@ -90,3 +90,9 @@ custom_application_fields = {
     "offer_1": "offer_1",
     "offer_2": "offer_2",
 }
+
+fields_format_newlines = [
+    "scouting_report_shared_with_the_following_schools",
+    "interviews_conducted_at_the_following_schools",
+    "offers_extended_from_the_following_schools"
+]

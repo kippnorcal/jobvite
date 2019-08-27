@@ -60,6 +60,9 @@ custom_application_fields = {
     "please_indicate_the_specific_subject_areas_you_would_like_to_teach": "subjectPref",
     "please_specify_which_language": "otherLanguageSpoken",
     "when_are_you_available_to_begin_work": "workStartAvailability",
+    "scouting_report_shared_with_the_following_schools":"scoutingReportShared",
+    "interviews_conducted_at_the_following_schools":"interviewsConductedAt",
+    "offers_extended_from_the_following_schools":"offersExtendedFrom",
     "shared_with_kipp_bayview_academy_middle": "sharedBayview",
     "shared_with_kipp_bayview_elementary": "sharedBayviewES",
     "shared_with_kipp_bridge__middle": "sharedBridgeUpper",
@@ -87,3 +90,9 @@ custom_application_fields = {
     "offer_1": "offer_1",
     "offer_2": "offer_2",
 }
+
+fields_format_newlines = [
+    "scouting_report_shared_with_the_following_schools",
+    "interviews_conducted_at_the_following_schools",
+    "offers_extended_from_the_following_schools"
+]

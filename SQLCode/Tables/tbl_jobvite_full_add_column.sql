@@ -9,3 +9,8 @@ ALTER TABLE custom.jobvite_full
         [assigned_pay_location] VARCHAR(MAX)
 
 ALTER TABLE custom.jobvite_full ADD [startDate] VARCHAR(MAX) NULL;
+
+ALTER TABLE custom.jobvite_full
+    ADD [scoutingReportShared] VARCHAR(MAX) NULL,
+        [interviewsConductedAt] VARCHAR(MAX) NULL,
+        [offersExtendedFrom] VARCHAR(MAX) NULL;

@@ -9,13 +9,13 @@ class Candidate:
         self._extract_candidate_info()
         delattr(self, "candidate")
 
-    def _remove_whitespace(self, s):
+    def _remove_whitespace(self, s, newlineCharacter):
         if s is not None:
             s = str(s)
             s = s.strip().strip("\n").strip("\t")
-            s = s.replace("\n", " ").replace("\t", " ")
+            s = s.replace("\n", newlineCharacter).replace("\t", " ")
         return s
-
+    
     def _convert_datetime(self, unix_timestamp):
         timestamp_without_miliseconds = unix_timestamp / 1000.0
         tz = pytz.timezone("America/Los_Angeles")
@@ -33,7 +33,7 @@ class Candidate:
     def _extract_candidate_fields(self):
         self.candidate_eid = self.candidate.get("eId")
         for field in data_config.candidate_fields:
-            value = self._remove_whitespace(self.candidate.get(field, ""))
+            value = self._remove_whitespace(self.candidate.get(field, "")," ")
             setattr(self, field, value)
 
     def _extract_application_fields(self):
@@ -49,14 +49,14 @@ class Candidate:
         else:
             self.startDate = None
         for field in data_config.application_fields:
-            value = self._remove_whitespace(application.get(field, ""))
+            value = self._remove_whitespace(application.get(field, "")," ")
             setattr(self, field, value)
 
     def _extract_job_fields(self):
         job = self.candidate.get("application").get("job")
         self.job_eid = job.get("eId")
         for field in data_config.job_fields:
-            value = self._remove_whitespace(job.get(field))
+            value = self._remove_whitespace(job.get(field)," ")
             setattr(self, field, value)
 
     def _extract_custom_job_fields(self):
@@ -67,7 +67,7 @@ class Candidate:
         if custom_job_fields is not None:
             for field in custom_job_fields:
                 key = field.get("fieldCode")
-                value = self._remove_whitespace(field.get("value", ""))
+                value = self._remove_whitespace(field.get("value", "")," ")
                 if key in data_config.custom_job_fields.keys():
                     setattr(self, key, value)
 
@@ -78,6 +78,9 @@ class Candidate:
 
         for field in custom_application_fields:
             key = field.get("fieldCode")
-            value = self._remove_whitespace(field.get("value", ""))
+            if key not in data_config.fields_format_newlines:
+                value = self._remove_whitespace(field.get("value", "")," ")
+            else:
+                value = self._remove_whitespace(field.get("value", "")," | ")
             if key in data_config.custom_application_fields.keys():
                 setattr(self, key, value)

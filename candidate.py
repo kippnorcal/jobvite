@@ -1,5 +1,7 @@
 from datetime import datetime
 import pytz
+import re
+
 import data_config
 
 
@@ -12,6 +14,7 @@ class Candidate:
     def _remove_whitespace(self, s, newlineCharacter):
         if s is not None:
             s = str(s)
+            s = re.sub('\n\n+','\n',s)
             s = s.strip().strip("\n").strip("\t")
             s = s.replace("\n", newlineCharacter).replace("\t", " ")
         return s

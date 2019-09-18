@@ -11,13 +11,12 @@ class Candidate:
         self._extract_candidate_info()
         delattr(self, "candidate")
 
-    def _remove_whitespace(self, s, newlineCharacter):
-        if s is not None:
-            s = str(s)
-            s = re.sub('\n\n+','\n',s)
-            s = s.strip().strip("\n").strip("\t")
-            s = s.replace("\n", newlineCharacter).replace("\t", " ")
-        return s
+    def _remove_whitespace(self, value, sep):
+        if value is not None:
+            value = str(value).strip().replace("\t", " ")
+            value = re.sub('\n\n+','\n',value)
+            value = value.replace("\n", sep)
+        return value
     
     def _convert_datetime(self, unix_timestamp):
         timestamp_without_miliseconds = unix_timestamp / 1000.0

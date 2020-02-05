@@ -51,13 +51,16 @@ $ docker build -t jobvite .
 ```
 JOBVITE_API_KEY=
 JOBVITE_API_SECRET=
+
 GMAIL_USER=
 GMAIL_PWD=
 SLACK_EMAIL=
-SERVER_IP=
+
+DB_SERVER=
 DB=
-USER=
-PWD=
+DB_USER=
+DB_PWD=
+DB_SCHEMA=
 ```
 
 ### Running the Job

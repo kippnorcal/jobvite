@@ -1,20 +1,18 @@
+import argparse
 from datetime import datetime, timedelta
-import json
 import logging
 import sys
+from timer import elapsed
 import traceback
-import urllib
-import pyodbc
+
 import pandas as pd
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text as sa_text
+from sqlsorcery import MSSQL
+
 from candidate import Candidate
+from data_config import custom_application_fields
 from job import Job
-import db
 import jobvite
 from mailer import Mailer
-from timer import elapsed
-import argparse
 
 
 logging.basicConfig(
@@ -37,7 +35,7 @@ def get_candidates():
     for result in results:
         candidates.append(Candidate(result).__dict__)
     logging.info(f"Retrieved {len(candidates)} candidate records from Jobvite API")
-    return candidates
+    return pd.DataFrame(candidates)
 
 
 def get_jobs():
@@ -46,14 +44,13 @@ def get_jobs():
     for result in results:
         jobs.append(Job(result).__dict__)
     logging.info(f"Retrieved {len(jobs)} job records from Jobvite API")
-    return jobs
+    return pd.DataFrame(jobs)
 
 
-def write_csv(dataframe, delimiter=","):
-    datestamp = datetime.now().strftime("%Y%m%d%I%M")
-    filename = f"output/candidates_{datestamp}.csv"
-    dataframe.to_csv(filename, sep=delimiter, index=False)
-    logging.info(f"Wrote {len(dataframe.index)} records to {filename}")
+def rename_columns(candidates, jobs):
+    candidates.rename(columns=custom_application_fields, inplace=True)    
+    candidates.index.rename("id", inplace=True)
+    jobs.index.rename("id", inplace=True)
 
 
 @elapsed
@@ -61,16 +58,15 @@ def main():
     try:
         mailer = Mailer()
         candidates = get_candidates()
-        candidates_df = pd.DataFrame(candidates)
         jobs = get_jobs()
-        jobs_df = pd.DataFrame(jobs)
+        rename_columns(candidates, jobs)
 
-        connection = db.Connection()
-        connection.insert_into("jobvite_cache", candidates_df)
-        connection.exec_sproc("sproc_Jobvite_MergeExtract")
-        connection.insert_into("jobvite_jobs_cache",jobs_df)
-        connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract")
-        mailer.notify(candidates_count=len(candidates_df.index),jobs_count=len(jobs_df.index))
+        connection = MSSQL()
+        connection.insert_into("jobvite_cache", candidates, if_exists="replace")
+        connection.exec_sproc("sproc_Jobvite_MergeExtract", autocommit=True)
+        connection.insert_into("jobvite_jobs_cache",jobs, if_exists="replace")
+        connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract", autocommit=True)
+        mailer.notify(candidates_count=len(candidates.index),jobs_count=len(jobs.index))
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()

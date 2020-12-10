@@ -20,7 +20,7 @@ Comments
 2019-04-15      DHess   Add source field.
 2019-06-12      SXiong  Add 4 new columns for HR account provisioning
 2019-08-20      SXiong  Add new school sharing columns
-
+2020-12-10      sxiong  Add Offer 3 for HR onboarding
 **************************************************************************************/
 ALTER PROCEDURE [custom].[sproc_Jobvite_MergeExtract]
 AS
@@ -95,6 +95,7 @@ SET jvfull.[workflowState] = cache.[workflowState]
            ,jvfull.[subjectPref]= cache.[subjectPref]
            ,jvfull.[offer_1]= cache.[offer_1]
            ,jvfull.[offer_2]= cache.[offer_2]           
+           ,jvfull.[offer_3]= cache.[offer_3]           
            ,jvfull.[otherLanguageSpoken]= cache.[otherLanguageSpoken]
            ,jvfull.[postalCode]= cache.[postalCode]
            ,jvfull.[postingType]= cache.[postingType]
@@ -135,7 +136,7 @@ INSERT ([application_eid],[candidate_eid],[job_eid],[workflowState],[workflowSta
 ,[department],[disposition],[validTeacherCert],[otherLanguageSpeaker],[spanishSpeaker],[email],[equipment_needed]
 ,[exempt_status],[firstName],[desiredSalary],[fte],[gender],[otherKIPPRegions],[howDidYouHear],[teachingExperience],[yrsExperience]
 ,[teacherLicensureProgram],[jobType],[jobviteChannel],[geoPreference],[lastName],[lastUpdatedDate],[likelihood_of_hire]
-,[location],[pay_type],[paycom_job_title],[gradePref],[subjectPref],[offer_1],[offer_2],[otherLanguageSpoken],[postalCode]
+,[location],[pay_type],[paycom_job_title],[gradePref],[subjectPref],[offer_1],[offer_2],[offer_3],[otherLanguageSpoken],[postalCode]
 ,[postingType],[race],[requisitionId],[scoutingReportShared],[interviewsConductedAt],[offersExtendedFrom],[sharedBayview],[sharedBayviewES],[sharedBridgeLower],[sharedBridgeUpper]
 ,[sharedExcelencia],[sharedHeartwood],[sharedHeritage],[sharedKing],[sharedSJC],[sharedNavigate],[sharedPrize]
 ,[sharedSFBay],[sharedSFCP],[sharedSummit],[sharedValiant],[sourceType],[source],[state],[startDate],[title],[veteranStatus]
@@ -145,7 +146,7 @@ VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[wor
 ,cache.[department],cache.[disposition],cache.[validTeacherCert],cache.[otherLanguageSpeaker],cache.[spanishSpeaker],cache.[email],cache.[equipment_needed]
 ,cache.[exempt_status],cache.[firstName],cache.[desiredSalary],cache.[fte],cache.[gender],cache.[otherKIPPRegions],cache.[howDidYouHear],cache.[teachingExperience],cache.[yrsExperience]
 ,cache.[teacherLicensureProgram],cache.[jobType],cache.[jobviteChannel],cache.[geoPreference],cache.[lastName],cache.[lastUpdatedDate],cache.[likelihood_of_hire]
-,cache.[location],cache.[pay_type],cache.[paycom_job_title],cache.[gradePref],cache.[subjectPref],cache.[offer_1],cache.[offer_2],cache.[otherLanguageSpoken],cache.[postalCode]
+,cache.[location],cache.[pay_type],cache.[paycom_job_title],cache.[gradePref],cache.[subjectPref],cache.[offer_1],cache.[offer_2],cache.[offer_3],cache.[otherLanguageSpoken],cache.[postalCode]
 ,cache.[postingType],cache.[race],cache.[requisitionId],cache.[scoutingReportShared],cache.[interviewsConductedAt],cache.[offersExtendedFrom],cache.[sharedBayview],cache.[sharedBayviewES],cache.[sharedBridgeLower],cache.[sharedBridgeUpper]
 ,cache.[sharedExcelencia],cache.[sharedHeartwood],cache.[sharedHeritage],cache.[sharedKing],cache.[sharedSJC],cache.[sharedNavigate],cache.[sharedPrize]
 ,cache.[sharedSFBay],cache.[sharedSFCP],cache.[sharedSummit],cache.[sharedValiant],cache.[sourceType],cache.[source],cache.[state],cache.[startDate],cache.[title],cache.[veteranStatus]

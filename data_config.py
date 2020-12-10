@@ -89,6 +89,7 @@ custom_application_fields = {
     "assigned_pay_location": "assigned_pay_location",
     "offer_1": "offer_1",
     "offer_2": "offer_2",
+    "offer_3": "offer_3",
 }
 
 fields_format_newlines = [

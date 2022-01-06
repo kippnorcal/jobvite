@@ -1,4 +1,4 @@
-# jobvite_connector
+# jobvite
 An ETL service job for staging Jobvite candidate and job data
 
 ## Dependencies:
@@ -16,7 +16,7 @@ An ETL service job for staging Jobvite candidate and job data
 1. Clone this repo
 
 ```
-$ git clone https://github.com/kipp-bayarea/jobvite_connector.git
+$ git clone https://github.com/kippnorcal/jobvite.git
 ```
 
 2. Install Pipenv

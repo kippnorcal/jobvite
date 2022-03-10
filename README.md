@@ -81,3 +81,8 @@ $ docker run -it jobvite --startdate='2019-07-01' --enddate='2019-07-31'
 
 To execute tests, run:
 * `pipenv run pytest`
+
+## Maintenance
+
+* No annual maintenance is required
+* This connector should NOT be turned off during the summer.

@@ -83,6 +83,13 @@ CREATE TABLE [custom].[jobvite_cache](
 	[workStartAvailability] [varchar](max) NULL,
 	[workStatus] [varchar](max) NULL,
 	[workflowState] [varchar](max) NULL,
+	homePhone               [varchar](max),
+    jobcoastcode            [varchar](max),
+    position                [varchar](max),
+    dept_code               [varchar](max),
+    hireDate                [varchar](max),
+    work_location_digit     [varchar](max),
+    pay_location_digit      [varchar](max),
 	[workflowStateEId] [varchar](max) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 

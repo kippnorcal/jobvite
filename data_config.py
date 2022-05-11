@@ -9,6 +9,7 @@ candidate_fields = [
     "firstName",
     "lastName",
     "workStatus",
+    "homePhone",
 ]
 
 application_fields = [
@@ -21,6 +22,7 @@ application_fields = [
     "veteranStatus",
     "workflowState",
     "workflowStateEId",
+    "hireDate",
 ]
 
 job_fields = [

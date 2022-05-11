@@ -68,7 +68,7 @@ def rename_columns(candidates, jobs):
 @elapsed
 def main():
     try:
-        # mailer = Mailer()
+        mailer = Mailer()
         candidates = get_candidates()
         jobs = get_jobs()
         rename_columns(candidates, jobs)
@@ -80,13 +80,13 @@ def main():
         connection.exec_sproc("sproc_Jobvite_MergeExtract", autocommit=True)
         connection.insert_into("jobvite_jobs_cache", jobs, if_exists="replace")
         connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract", autocommit=True)
-        # mailer.notify(
-        # candidates_count=len(candidates.index), jobs_count=len(jobs.index)
-        # )
+        mailer.notify(
+            candidates_count=len(candidates.index), jobs_count=len(jobs.index)
+        )
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
-        # mailer.notify(success=False, error_message=stack_trace)
+        mailer.notify(success=False, error_message=stack_trace)
 
 
 if __name__ == "__main__":

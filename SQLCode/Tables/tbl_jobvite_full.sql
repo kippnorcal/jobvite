@@ -85,13 +85,13 @@ CREATE TABLE [custom].[jobvite_full](
 	[veteranStatus] [varchar](max) NULL,
 	[workStartAvailability] [varchar](max) NULL,
 	[workStatus] [varchar](max) NULL,
-	homePhone               [varchar](max),
-    jobcoastcode            [varchar](max),
-    position                [varchar](max),
-    dept_code               [varchar](max),
-    hireDate                [varchar](max),
-    work_location_digit     [varchar](max),
-    pay_location_digit      [varchar](max),
+	[homePhone] [varchar](max),
+    [jobcoastcode] [varchar](max),
+    [position] [varchar](max),
+    [dept_code] [varchar](max),
+    [hireDate] [varchar](max),
+    [work_location_digit] [varchar](max),
+    [pay_location_digit] [varchar](max),
 	[LastMergedDate] [datetime] NULL CONSTRAINT [DF_jobvite_full_LastMergedDate]  DEFAULT (getdate())
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 

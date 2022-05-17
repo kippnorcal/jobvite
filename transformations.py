@@ -11,6 +11,12 @@ class Field_Transformations:
         self.parse_location_code()
         self.create_jobcoastcode()
 
+    """
+    When paycom_job_title is formatted as "Academics Associate (0002/1005/ADASO)"", the following 
+    method extracts the capitalized, abbreviated form of the position (i.e. ADASO). Not all field values are
+    in this format so it first checks if "(" is included in the string
+    """
+
     def possition_abbr(self):
         new_column = []
         for result in self.dataframe["paycom_job_title"]:
@@ -20,6 +26,11 @@ class Field_Transformations:
             else:
                 new_column.append(None)
         self.dataframe["position"] = new_column
+
+    """
+    The following method first joins our Jobvite dataframe with the csv containing department codes, then it cleans it 
+    by turning the float (ex. "1015.0") into a string and removing ".0" by only taking the first 4 characters ([:4])
+    """
 
     def add_dept_codes(self):
         dept_codes = pd.read_csv("dept_codes.csv")
@@ -53,7 +64,14 @@ class Field_Transformations:
             + "99|9999)"
         )
 
-    def parse_pay_code(self):
+    """
+    The next two methods simply extraxt the 3-digit code from both pay and work location (ex. takes 218 from "KIPP Bayview Elementary (218)"). Since
+    not all field values are in this format, it first checks if "(" is in the string. I was getting a data type error so I also first checked
+    if the value is a string
+)
+    """
+
+    def parse_pay_location(self):
         pay_abbr_column = []
         for result in self.dataframe["assigned_pay_location"]:
             if isinstance(result, str) and "(" in result:

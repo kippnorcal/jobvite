@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import time
 
 
 class Field_Transformations:
@@ -9,7 +10,9 @@ class Field_Transformations:
         self.add_dept_codes()
         self.parse_pay_code()
         self.parse_location_code()
-        self.create_jobcoastcode()
+        self.clean_address()
+        self.clean_homePhone()
+        self.clean_hireDate()
 
     """
     When paycom_job_title is formatted as "Academics Associate (0002/1005/ADASO)"", the following 
@@ -48,21 +51,40 @@ class Field_Transformations:
 
         self.dataframe["dept_code"] = new_dept_column
 
-    def create_jobcoastcode(self):
-        dept_code_string = []
+    ##Paycom only accepts words and digits within address column so this method removes unacceptable characters
+    def clean_address(self):
+        new_addr_column = []
+        for result in self.dataframe["address"]:
+            new_value = (
+                result.replace(".", "")
+                .replace("#", "")
+                .replace(",", "")
+                .replace("/", "")
+            )
+            new_addr_column.append(new_value)
+        self.dataframe["address"] = new_addr_column
 
-        self.dataframe["jobcoastcode"] = (
-            "("
-            + self.dataframe["work_location_digit"]
-            + "|"
-            + self.dataframe["dept_code"]
-            + "|"
-            + self.dataframe["pay_location_digit"]
-            + "|"
-            + self.dataframe["position"]
-            + "|"
-            + "99|9999)"
-        )
+    ##Standardizing homePhone to meet Paycom's format requirement
+    def clean_homePhone(self):
+        new_phone_column = []
+        for result in self.dataframe["homePhone"]:
+            new_value = re.sub("[^0-9]", "", result)
+            new_phone_column.append(new_value)
+        self.dataframe["homePhone"] = new_phone_column
+
+    ##Converting hireDate from Epoch Unix to the date format that Paycom requires
+    def clean_hireDate(self):
+        new_hireDate_column = []
+        for result in self.dataframe["hireDate"]:
+            if len(result) > 1:
+                epoch_integer = int(result[:-3])
+                time_formatted = time.strftime(
+                    "%Y-%m-%d", time.localtime(epoch_integer)
+                )
+                new_hireDate_column.append(time_formatted)
+            else:
+                new_hireDate_column.append(None)
+        self.dataframe["hireDate"] = new_hireDate_column
 
     """
     The next two methods simply extraxt the 3-digit code from both pay and work location (ex. takes 218 from "KIPP Bayview Elementary (218)"). Since
@@ -81,7 +103,7 @@ class Field_Transformations:
                 pay_abbr_column.append(None)
         self.dataframe["pay_location_digit"] = pay_abbr_column
 
-    def parse_location_code(self):
+    def parse_work_location(self):
         location_abbr_column = []
         for result in self.dataframe["assigned_work_location"]:
             if isinstance(result, str) and "(" in result:

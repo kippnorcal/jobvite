@@ -8,8 +8,8 @@ class Field_Transformations:
         self.dataframe = dataframe
         self.possition_abbr()
         self.add_dept_codes()
-        self.parse_pay_code()
-        self.parse_location_code()
+        self.parse_pay_location()
+        self.parse_work_location()
         self.clean_address()
         self.clean_homePhone()
         self.clean_hireDate()

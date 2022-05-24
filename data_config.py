@@ -92,6 +92,9 @@ custom_application_fields = {
     "offer_1": "offer_1",
     "offer_2": "offer_2",
     "offer_3": "offer_3",
+    "Annual_Salary": "Annual_Salary",
+    "Semi_Monthly_Rate": "Semi_Monthly_Rate",
+    "Hourly_Rate": "Hourly_Rate"
 }
 
 fields_format_newlines = [

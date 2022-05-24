@@ -92,6 +92,9 @@ CREATE TABLE [custom].[jobvite_full](
     [hireDate] [varchar](max),
     [work_location_digit] [varchar](max),
     [pay_location_digit] [varchar](max),
+	[Annual_Salary] [varchar](max),
+	[Semi_Monthly_Rate] [varchar](max),
+	[Hourly_Rate] [varchar](max),
 	[LastMergedDate] [datetime] NULL CONSTRAINT [DF_jobvite_full_LastMergedDate]  DEFAULT (getdate())
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 

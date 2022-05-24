@@ -90,6 +90,9 @@ CREATE TABLE [custom].[jobvite_cache](
     [hireDate] [varchar](max),
     [work_location_digit] [varchar](max),
     [pay_location_digit] [varchar](max),
+	[Annual_Salary] [varchar](max),
+	[Semi_Monthly_Rate] [varchar](max),
+	[Hourly_Rate] [varchar](max),
 	[workflowStateEId] [varchar](max) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 

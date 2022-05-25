@@ -118,7 +118,6 @@ SET jvfull.[workflowState] = cache.[workflowState]
            ,jvfull.[position] = cache.[position]
            ,jvfull.[dept_code] = cache.[dept_code]
            ,jvfull.[hireDate] = cache.[hireDate]
-           ,jvfull.[jobcoastcode] = cache.[jobcoastcode]
            ,jvfull.[pay_location_digit] = cache.[pay_location_digit]
            ,jvfull.[work_location_digit] = cache.[work_location_digit]
            ,jvfull.[Annual_Salary] = cache.[Annual_Salary]
@@ -137,7 +136,7 @@ INSERT ([application_eid],[candidate_eid],[job_eid],[workflowState],[workflowSta
 ,[postingType],[race],[requisitionId],[scoutingReportShared],[interviewsConductedAt],[offersExtendedFrom],[sharedBayview],[sharedBayviewES],[sharedBridgeLower],[sharedBridgeUpper]
 ,[sharedExcelencia],[sharedHeartwood],[sharedHeritage],[sharedKing],[sharedSJC],[sharedNavigate],[sharedPrize]
 ,[sharedSFBay],[sharedSFCP],[sharedSummit],[sharedValiant],[sourceType],[source],[state],[startDate],[title],[veteranStatus]
-,[workStartAvailability],[workStatus], [homePhone],[position],[dept_code], [hireDate], [jobcoastcode], [pay_location_digit], [work_location_digit], [Annual_Salary]
+,[workStartAvailability],[workStatus], [homePhone],[position],[dept_code], [hireDate], [pay_location_digit], [work_location_digit], [Annual_Salary]
 ,[Semi_Monthly_Rate], [Hourly_Rate], [LastMergedDate])
 VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[workflowState],cache.[workflowStateEId],cache.[address],cache.[address2]
 ,cache.[application_owner],cache.[formerOrCurrentKIPP],cache.[KIPPAlumni],cache.[assigned_pay_location],cache.[assigned_work_location],cache.[city],cache.[country],cache.[credentialing_score]
@@ -148,7 +147,7 @@ VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[wor
 ,cache.[postingType],cache.[race],cache.[requisitionId],cache.[scoutingReportShared],cache.[interviewsConductedAt],cache.[offersExtendedFrom],cache.[sharedBayview],cache.[sharedBayviewES],cache.[sharedBridgeLower],cache.[sharedBridgeUpper]
 ,cache.[sharedExcelencia],cache.[sharedHeartwood],cache.[sharedHeritage],cache.[sharedKing],cache.[sharedSJC],cache.[sharedNavigate],cache.[sharedPrize]
 ,cache.[sharedSFBay],cache.[sharedSFCP],cache.[sharedSummit],cache.[sharedValiant],cache.[sourceType],cache.[source],cache.[state],cache.[startDate],cache.[title],cache.[veteranStatus]
-,cache.[workStartAvailability],cache.[workStatus], cache.[homePhone],[position],[dept_code], [hireDate], [jobcoastcode], [pay_location_digit], [work_location_digit]
+,cache.[workStartAvailability],cache.[workStatus], cache.[homePhone],[position],[dept_code], [hireDate], [pay_location_digit], [work_location_digit]
 ,[Annual_Salary], [Semi_Monthly_Rate], [Hourly_Rate], GETDATE())
 
 /*Probably going to do nothing

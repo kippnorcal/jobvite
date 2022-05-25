@@ -13,6 +13,7 @@ from data_config import custom_application_fields
 from job import Job
 import jobvite
 from mailer import Mailer
+from transformations import Field_Transformations
 
 
 logging.basicConfig(
@@ -71,9 +72,11 @@ def main():
         candidates = get_candidates()
         jobs = get_jobs()
         rename_columns(candidates, jobs)
-
+        transformed_candidates = Field_Transformations(candidates).dataframe
         connection = MSSQL()
-        connection.insert_into("jobvite_cache", candidates, if_exists="replace")
+        connection.insert_into(
+            "jobvite_cache", transformed_candidates, if_exists="replace"
+        )
         connection.exec_sproc("sproc_Jobvite_MergeExtract", autocommit=True)
         connection.insert_into("jobvite_jobs_cache", jobs, if_exists="replace")
         connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract", autocommit=True)

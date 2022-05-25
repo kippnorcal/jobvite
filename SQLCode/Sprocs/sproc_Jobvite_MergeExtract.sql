@@ -1,29 +1,16 @@
-
-/****** Object:  StoredProcedure [custom].[sproc_Jobvite_MergeExtract]    Script Date: 3/13/2019 11:08:07 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
+CREATE PROCEDURE [custom].[sproc_Jobvite_MergeExtract]
+AS
 /**************************************************************************************
 Description: Merges the data from the most recent extract of Jobvite data into the full repository
-
 EXEC dbo.[sproc_Jobvite_MergeExtract]
-
 Comments
 2019-02-28      MDunn   Created
 2019-03-04      DHess   Change schema for table names.
 2019-04-15      DHess   Add source field.
 2019-06-12      SXiong  Add 4 new columns for HR account provisioning
 2019-08-20      SXiong  Add new school sharing columns
-2020-12-10      sxiong  Add Offer 3 for HR onboarding
-**************************************************************************************/
-ALTER PROCEDURE [custom].[sproc_Jobvite_MergeExtract]
-AS
+2022-05-11      LMendez Added 7 fields that will be needed for Schoolytics  
+  **************************************************************************************/
 BEGIN
 
 SET XACT_ABORT ON
@@ -127,6 +114,15 @@ SET jvfull.[workflowState] = cache.[workflowState]
            ,jvfull.[veteranStatus]= cache.[veteranStatus]
            ,jvfull.[workStartAvailability]= cache.[workStartAvailability]
            ,jvfull.[workStatus] = cache.[workStatus]
+           ,jvfull.[homePhone] = cache.[homePhone]
+           ,jvfull.[position] = cache.[position]
+           ,jvfull.[dept_code] = cache.[dept_code]
+           ,jvfull.[hireDate] = cache.[hireDate]
+           ,jvfull.[pay_location_digit] = cache.[pay_location_digit]
+           ,jvfull.[work_location_digit] = cache.[work_location_digit]
+           ,jvfull.[Annual_Salary] = cache.[Annual_Salary]
+           ,jvfull.[Semi_monthly_Rate] = cache.[Semi_Monthly_Rate]
+           ,jvfull.[Hourly_Rate] = cache.[Hourly_Rate]
            ,jvfull.[LastMergedDate] = getdate()
 
 WHEN NOT MATCHED
@@ -140,7 +136,8 @@ INSERT ([application_eid],[candidate_eid],[job_eid],[workflowState],[workflowSta
 ,[postingType],[race],[requisitionId],[scoutingReportShared],[interviewsConductedAt],[offersExtendedFrom],[sharedBayview],[sharedBayviewES],[sharedBridgeLower],[sharedBridgeUpper]
 ,[sharedExcelencia],[sharedHeartwood],[sharedHeritage],[sharedKing],[sharedSJC],[sharedNavigate],[sharedPrize]
 ,[sharedSFBay],[sharedSFCP],[sharedSummit],[sharedValiant],[sourceType],[source],[state],[startDate],[title],[veteranStatus]
-,[workStartAvailability],[workStatus],[LastMergedDate])
+,[workStartAvailability],[workStatus], [homePhone],[position],[dept_code], [hireDate], [pay_location_digit], [work_location_digit], [Annual_Salary]
+,[Semi_Monthly_Rate], [Hourly_Rate], [LastMergedDate])
 VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[workflowState],cache.[workflowStateEId],cache.[address],cache.[address2]
 ,cache.[application_owner],cache.[formerOrCurrentKIPP],cache.[KIPPAlumni],cache.[assigned_pay_location],cache.[assigned_work_location],cache.[city],cache.[country],cache.[credentialing_score]
 ,cache.[department],cache.[disposition],cache.[validTeacherCert],cache.[otherLanguageSpeaker],cache.[spanishSpeaker],cache.[email],cache.[equipment_needed]
@@ -150,7 +147,8 @@ VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[wor
 ,cache.[postingType],cache.[race],cache.[requisitionId],cache.[scoutingReportShared],cache.[interviewsConductedAt],cache.[offersExtendedFrom],cache.[sharedBayview],cache.[sharedBayviewES],cache.[sharedBridgeLower],cache.[sharedBridgeUpper]
 ,cache.[sharedExcelencia],cache.[sharedHeartwood],cache.[sharedHeritage],cache.[sharedKing],cache.[sharedSJC],cache.[sharedNavigate],cache.[sharedPrize]
 ,cache.[sharedSFBay],cache.[sharedSFCP],cache.[sharedSummit],cache.[sharedValiant],cache.[sourceType],cache.[source],cache.[state],cache.[startDate],cache.[title],cache.[veteranStatus]
-,cache.[workStartAvailability],cache.[workStatus],GETDATE())
+,cache.[workStartAvailability],cache.[workStatus], cache.[homePhone],[position],[dept_code], [hireDate], [pay_location_digit], [work_location_digit]
+,[Annual_Salary], [Semi_Monthly_Rate], [Hourly_Rate], GETDATE())
 
 /*Probably going to do nothing
 WHEN NOT MATCHED BY Delta 
@@ -169,8 +167,4 @@ END CATCH
 TRUNCATE TABLE custom.jobvite_cache
 
 END
-
-
-GO
-
-
+go

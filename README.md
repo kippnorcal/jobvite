@@ -45,6 +45,9 @@ $ pre-commit install
 ```
 $ docker build -t jobvite .
 ```
+If you get back an error then try the following command instead (this will likely happen if you are using a newer Macbook with an M1 chip):
+
+docker build -t jobvite . --no-cache --platform linux/amd64
 
 6. Create .env file with project secrets
 

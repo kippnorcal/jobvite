@@ -8,6 +8,7 @@ requests = "*"
 pytest = "*"
 sqlsorcery = {extras = ["mssql"],version = "*"}
 pyodbc = "==4.0.30b1"
+pandas = "*"
 
 [dev-packages]
 

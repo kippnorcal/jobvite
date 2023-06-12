@@ -2,15 +2,13 @@
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
-
 [packages]
 requests = "*"
 pytest = "*"
+pandas = "*"
+sqlalchemy = "~=1.4"
 sqlsorcery = {extras = ["mssql"],version = "*"}
 pyodbc = "==4.0.30b1"
-pandas = "*"
-
 [dev-packages]
-
 [requires]
 python_version = "3.7"

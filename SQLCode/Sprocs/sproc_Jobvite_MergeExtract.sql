@@ -123,6 +123,7 @@ SET jvfull.[workflowState] = cache.[workflowState]
            ,jvfull.[Annual_Salary] = cache.[Annual_Salary]
            ,jvfull.[Semi_monthly_Rate] = cache.[Semi_Monthly_Rate]
            ,jvfull.[Hourly_Rate] = cache.[Hourly_Rate]
+           ,jvfull.[is_this_a_rehire_promotion_or_internal_transfer] = cache.[is_this_a_rehire_promotion_or_internal_transfer]
            ,jvfull.[LastMergedDate] = getdate()
 
 WHEN NOT MATCHED
@@ -137,7 +138,7 @@ INSERT ([application_eid],[candidate_eid],[job_eid],[workflowState],[workflowSta
 ,[sharedExcelencia],[sharedHeartwood],[sharedHeritage],[sharedKing],[sharedSJC],[sharedNavigate],[sharedPrize]
 ,[sharedSFBay],[sharedSFCP],[sharedSummit],[sharedValiant],[sourceType],[source],[state],[startDate],[title],[veteranStatus]
 ,[workStartAvailability],[workStatus], [homePhone],[position],[dept_code], [hireDate], [pay_location_digit], [work_location_digit], [Annual_Salary]
-,[Semi_Monthly_Rate], [Hourly_Rate], [LastMergedDate])
+,[Semi_Monthly_Rate], [Hourly_Rate],[is_this_a_rehire_promotion_or_internal_transfer], [LastMergedDate])
 VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[workflowState],cache.[workflowStateEId],cache.[address],cache.[address2]
 ,cache.[application_owner],cache.[formerOrCurrentKIPP],cache.[KIPPAlumni],cache.[assigned_pay_location],cache.[assigned_work_location],cache.[city],cache.[country],cache.[credentialing_score]
 ,cache.[department],cache.[disposition],cache.[validTeacherCert],cache.[otherLanguageSpeaker],cache.[spanishSpeaker],cache.[email],cache.[equipment_needed]
@@ -148,7 +149,7 @@ VALUES (cache.[application_eid],cache.[candidate_eid],cache.[job_eid],cache.[wor
 ,cache.[sharedExcelencia],cache.[sharedHeartwood],cache.[sharedHeritage],cache.[sharedKing],cache.[sharedSJC],cache.[sharedNavigate],cache.[sharedPrize]
 ,cache.[sharedSFBay],cache.[sharedSFCP],cache.[sharedSummit],cache.[sharedValiant],cache.[sourceType],cache.[source],cache.[state],cache.[startDate],cache.[title],cache.[veteranStatus]
 ,cache.[workStartAvailability],cache.[workStatus], cache.[homePhone],[position],[dept_code], [hireDate], [pay_location_digit], [work_location_digit]
-,[Annual_Salary], [Semi_Monthly_Rate], [Hourly_Rate], GETDATE())
+,[Annual_Salary], [Semi_Monthly_Rate], [Hourly_Rate], [is_this_a_rehire_promotion_or_internal_transfer], GETDATE())
 
 /*Probably going to do nothing
 WHEN NOT MATCHED BY Delta 

@@ -94,7 +94,8 @@ custom_application_fields = {
     "offer_3": "offer_3",
     "Annual_Salary": "Annual_Salary",
     "Semi_Monthly_Rate": "Semi_Monthly_Rate",
-    "Hourly_Rate": "Hourly_Rate"
+    "Hourly_Rate": "Hourly_Rate",
+    "is_this_a_rehire_promotion_or_internal_transfer": "is_this_a_rehire_promotion_or_internal_transfer"
 }
 
 fields_format_newlines = [

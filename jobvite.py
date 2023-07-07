@@ -41,10 +41,6 @@ class JobviteAPI:
             'requesting: "{}?{}"'.format(endpoint, urlencode(params, doseq=True))
         )
 
-        for k, v in self.default_request_params.items():
-            if k not in params:
-                params[k] = v
-
         response = requests.get(endpoint, params=params)
         if response.status_code == 200:
             return response

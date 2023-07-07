@@ -24,8 +24,8 @@ class JobviteAPI:
         self.logger = logger if logger else logging.getLogger()
 
     @property
-    def default_request_params(self):
-        return {"api": self.api_key, "sc": self.api_secret}
+    def request_credentials(self):
+        return {"x-jvi-api": self.api_key, "x-jvi-sc": self.api_secret}
 
     @property
     def candidates_endpoint(self):
@@ -41,7 +41,8 @@ class JobviteAPI:
             'requesting: "{}?{}"'.format(endpoint, urlencode(params, doseq=True))
         )
 
-        response = requests.get(endpoint, params=params)
+        # As of 10/1/2023, credentials have to be passed through headers
+        response = requests.get(endpoint, params=params, headers=self.request_credentials)
         if response.status_code == 200:
             return response
         else:

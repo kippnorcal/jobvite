@@ -9,6 +9,7 @@ RUN curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sou
 RUN apt-get update
 RUN apt-get install -y apt-utils
 RUN ACCEPT_EULA=Y apt-get install -y msodbcsql17
+RUN apt-get install -y unixodbc unixodbc-dev
 RUN pip install pipenv
 RUN pipenv install
 COPY ./*.py /app/

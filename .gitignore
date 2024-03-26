@@ -91,6 +91,7 @@ env.bak/
 venv.bak/
 *.swp
 .DS_Store
+.idea
 
 # Spyder project settings
 .spyderproject

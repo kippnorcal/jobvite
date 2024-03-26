@@ -1,17 +1,10 @@
-FROM python:3.7
-WORKDIR /app
-COPY ./.env /app/
-COPY ./Pipfile* /app/
-COPY dept_codes.csv /app/
-RUN mkdir output
+FROM --platform=linux/amd64 python:3.10-bullseye
+WORKDIR /code
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-RUN curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list
+RUN curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update
-RUN apt-get install -y apt-utils
 RUN ACCEPT_EULA=Y apt-get install -y msodbcsql17
-RUN apt-get install -y unixodbc unixodbc-dev
 RUN pip install pipenv
-RUN pipenv install
-COPY ./*.py /app/
+COPY . .
+RUN pipenv install --skip-lock
 ENTRYPOINT ["pipenv", "run", "python", "main.py"]
- 

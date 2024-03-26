@@ -2,9 +2,10 @@ import argparse
 from datetime import datetime, timedelta
 import logging
 import sys
-from timer import elapsed
 import traceback
 
+from job_notifications import create_notifications
+from job_notifications import timer
 import pandas as pd
 from sqlsorcery import MSSQL
 
@@ -65,10 +66,10 @@ def rename_columns(candidates, jobs):
     jobs.index.rename("id", inplace=True)
 
 
-@elapsed
+@timer("Jobvite")
 def main():
+    notifications = create_notifications("Jobvite", "mailgun", logs="app.log")
     try:
-        mailer = Mailer()
         candidates = get_candidates()
         jobs = get_jobs()
         rename_columns(candidates, jobs)
@@ -80,13 +81,13 @@ def main():
         connection.exec_sproc("sproc_Jobvite_MergeExtract", autocommit=True)
         connection.insert_into("jobvite_jobs_cache", jobs, if_exists="replace")
         connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract", autocommit=True)
-        mailer.notify(
-            candidates_count=len(candidates.index), jobs_count=len(jobs.index)
-        )
+        logger.info(f"Loaded {len(candidates.index)} candidates")
+        logger.info(f"Loaded {len(jobs.index)} jobs")
+        notifications.notify()
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
-        mailer.notify(success=False, error_message=stack_trace)
+        notifications.notify(error_message=stack_trace)
 
 
 if __name__ == "__main__":

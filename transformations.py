@@ -15,19 +15,24 @@ class Field_Transformations:
         self.clean_hireDate()
 
     """
-    When paycom_job_title is formatted as "Academics Associate (0002/1005/ADASO)"", the following 
+    When paycom_job_title is formatted as "Academics Associate (0002/1005/ADASO)", the following 
     method extracts the capitalized, abbreviated form of the position (i.e. ADASO). Not all field values are
-    in this format so it first checks if "(" is included in the string
+    in this format so it first checks if "(" is included in the string. There are some job titles that have parenthesis
+    in the title (ex. "Board Certified Behavior Analyst (BCBA)"), the try/except for the IndexError will handle these.
     """
 
     def possition_abbr(self):
         new_column = []
         for result in self.dataframe["paycom_job_title"]:
-            if "(" in result:
-                value = result.split("/")[2]
-                new_column.append(value[:-1])
-            else:
+            try:
+                if "(" in result:
+                    value = result.split("/")[2]
+                    new_column.append(value[:-1])
+                else:
+                    new_column.append(None)
+            except IndexError:
                 new_column.append(None)
+
         self.dataframe["position"] = new_column
 
     """

@@ -3,11 +3,9 @@ An ETL service job for staging Jobvite candidate and job data
 
 ## Dependencies:
 
-* Python3.7
+* Python3
 * [Pipenv](https://pipenv.readthedocs.io/en/latest/)
-* [Docker](https://www.docker.com/)
-* [Black](https://github.com/ambv/black)
-* [Pre-commit](https://pre-commit.com/)
+* [Docker](https://www.docker.com/))
 
 ## Getting Started
 
@@ -26,21 +24,13 @@ $ pip install pipenv
 $ pipenv install
 ```
 
-3. Install developer dependencies
-
-```
-$ pip install black
-$ pip install pre-commit
-$ pre-commit install
-```
-
-4. Install Docker
+3. Install Docker
 
 * **Mac**: [https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
 * **Linux**: [https://docs.docker.com/install/linux/docker-ce/debian/](https://docs.docker.com/install/linux/docker-ce/debian/)
 * **Windows**: [https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
 
-5. Build Docker Image
+4. Build Docker Image
 
 ```
 $ docker build -t jobvite .
@@ -49,15 +39,18 @@ If you get back an error then try the following command instead (this will likel
 
 docker build -t jobvite . --no-cache --platform linux/amd64
 
-6. Create .env file with project secrets
+5. Create .env file with project secrets
 
 ```
 JOBVITE_API_KEY=
 JOBVITE_API_SECRET=
 
-GMAIL_USER=
-GMAIL_PWD=
-SLACK_EMAIL=
+# Mailgun & email notification variables
+MG_DOMAIN=
+MG_API_URL=
+MG_API_KEY=
+FROM_ADDRESS=
+TO_ADDRESS=
 
 DB_SERVER=
 DB=
@@ -71,12 +64,12 @@ DB_SCHEMA=
 Run for yesterdays candidates.
 
 ```
-$ docker run -it jobvite 
+$ docker run -t jobvite 
 ```
 
 Optionally, you can run it with start/end date arguments to pull more than just yesterday's candidates.
 ```
-$ docker run -it jobvite --startdate='2019-07-01' --enddate='2019-07-31'
+$ docker run -it jobvite --start-date='2019-07-01' --end-date='2019-07-31'
 ```
 
 

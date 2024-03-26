@@ -2,9 +2,10 @@ import argparse
 from datetime import datetime, timedelta
 import logging
 import sys
-from timer import elapsed
 import traceback
 
+from job_notifications import create_notifications
+from job_notifications import timer
 import pandas as pd
 from sqlsorcery import MSSQL
 
@@ -12,33 +13,40 @@ from candidate import Candidate
 from data_config import custom_application_fields
 from job import Job
 import jobvite
-from mailer import Mailer
 from transformations import Field_Transformations
 
 
 logging.basicConfig(
-    stream=sys.stdout,
+    handlers=[
+        logging.FileHandler(filename="app.log", mode="w+"),
+        logging.StreamHandler(sys.stdout),
+    ],
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s: %(message)s",
-    datefmt="%Y-%m-%d %I:%M:%S%p",
+    datefmt="%Y-%m-%d %I:%M:%S%p %Z",
 )
 
 parser = argparse.ArgumentParser(
     description="Accept start and end date for date window"
 )
 parser.add_argument(
-    "--startdate",
+    "--start-date",
     help="Start Date - format YYYY-MM-DD",
+    dest="start_date",
     default=(datetime.now() - timedelta(1)).strftime("%Y-%m-%d"),
 )
 parser.add_argument(
-    "--enddate",
+    "--end-date",
     help="End Date - format YYYY-MM-DD",
+    dest="start_date",
     default=(datetime.now()).strftime("%Y-%m-%d"),
 )
+
 args = parser.parse_args()
-START_DATE = args.startdate
-END_DATE = args.enddate
+START_DATE = args.start_date
+END_DATE = args.end_date
+
+logger = logging.getLogger(__name__)
 
 
 def get_candidates():
@@ -65,10 +73,10 @@ def rename_columns(candidates, jobs):
     jobs.index.rename("id", inplace=True)
 
 
-@elapsed
+@timer("Jobvite")
 def main():
+    notifications = create_notifications("Jobvite", "mailgun", logs="app.log")
     try:
-        mailer = Mailer()
         candidates = get_candidates()
         jobs = get_jobs()
         rename_columns(candidates, jobs)
@@ -80,13 +88,13 @@ def main():
         connection.exec_sproc("sproc_Jobvite_MergeExtract", autocommit=True)
         connection.insert_into("jobvite_jobs_cache", jobs, if_exists="replace")
         connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract", autocommit=True)
-        mailer.notify(
-            candidates_count=len(candidates.index), jobs_count=len(jobs.index)
-        )
+        logger.info(f"Loaded {len(candidates.index)} candidates")
+        logger.info(f"Loaded {len(jobs.index)} jobs")
+        notifications.notify()
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
-        mailer.notify(success=False, error_message=stack_trace)
+        notifications.notify(error_message=stack_trace)
 
 
 if __name__ == "__main__":

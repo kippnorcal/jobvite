@@ -13,33 +13,40 @@ from candidate import Candidate
 from data_config import custom_application_fields
 from job import Job
 import jobvite
-from mailer import Mailer
 from transformations import Field_Transformations
 
 
 logging.basicConfig(
-    stream=sys.stdout,
+    handlers=[
+        logging.FileHandler(filename="app.log", mode="w+"),
+        logging.StreamHandler(sys.stdout),
+    ],
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s: %(message)s",
-    datefmt="%Y-%m-%d %I:%M:%S%p",
+    datefmt="%Y-%m-%d %I:%M:%S%p %Z",
 )
 
 parser = argparse.ArgumentParser(
     description="Accept start and end date for date window"
 )
 parser.add_argument(
-    "--startdate",
+    "--start-date",
     help="Start Date - format YYYY-MM-DD",
+    dest="start_date",
     default=(datetime.now() - timedelta(1)).strftime("%Y-%m-%d"),
 )
 parser.add_argument(
-    "--enddate",
+    "--end-date",
     help="End Date - format YYYY-MM-DD",
+    dest="start_date",
     default=(datetime.now()).strftime("%Y-%m-%d"),
 )
+
 args = parser.parse_args()
-START_DATE = args.startdate
-END_DATE = args.enddate
+START_DATE = args.start_date
+END_DATE = args.end_date
+
+logger = logging.getLogger(__name__)
 
 
 def get_candidates():

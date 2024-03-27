@@ -38,7 +38,7 @@ parser.add_argument(
 parser.add_argument(
     "--end-date",
     help="End Date - format YYYY-MM-DD",
-    dest="start_date",
+    dest="end_date",
     default=(datetime.now()).strftime("%Y-%m-%d"),
 )
 

@@ -54,7 +54,7 @@ BUCKET = os.getenv("BUCKET")
 logger = logging.getLogger(__name__)
 
 
-def get_candidates(jobvite_con, cloud_client):
+def get_candidates(jobvite_con, cloud_client) -> None:
     results = jobvite_con.candidates(start_date=START_DATE, end_date=END_DATE)
     count = 0
     for result in results:
@@ -65,7 +65,7 @@ def get_candidates(jobvite_con, cloud_client):
     logging.info(f"Retrieved {count} candidate records from Jobvite API")
 
 
-def get_jobs(jobvite_con, cloud_client):
+def get_jobs(jobvite_con, cloud_client) -> None:
     results = jobvite_con.jobs()
     count = 0
     for result in results:
@@ -75,7 +75,27 @@ def get_jobs(jobvite_con, cloud_client):
     logging.info(f"Retrieved {count} job records from Jobvite API")
 
 
-def create_and_upload_file(data, cloud_client, record_id, primary_key, record_type):
+def create_and_upload_file(
+        data: dict,
+        cloud_client: CloudStorageClient,
+        record_id:
+        str,
+        primary_key: str,
+        record_type: str
+        ) -> None:
+        """
+        This func helps reduce redundent code by uploading both candidate and job data.
+        data: the data of teh record
+        cloud_client: connection to Google cloud
+        record_id: eId (job) or candidate_eId (candidate)
+        primary_key: requisitionId (job) or application_eId (candidate)
+        record_type: 'job' or 'candidate'
+        """
+        if record_type == "jobs":
+            cloud_folder = JOBS_CLOUD_FOLDER
+        else:
+            cloud_folder = CANDIDATES_CLOUD_FOLDER
+
         eid = data[record_id]
         pk = data[primary_key]
         file_name = f"{record_type}_{eid}_{pk}.ndjson"
@@ -86,20 +106,14 @@ def create_and_upload_file(data, cloud_client, record_id, primary_key, record_ty
         
         # Uploading file from local dir
         with open(local_file_path, "r") as f:
-            blob = os.path.join(JOBS_CLOUD_FOLDER, file_name)
+            blob = os.path.join(cloud_folder, file_name)
             cloud_client.load_file_to_cloud(BUCKET, blob, f)
 
 
-def cleanup_files():
+def cleanup_files() -> None:
     files = glob.glob(f"./output/*.ndjson")
     for file in files:
         os.remove(file)
-
-
-def rename_columns(candidates, jobs):
-    candidates.rename(columns=custom_application_fields, inplace=True)
-    candidates.index.rename("id", inplace=True)
-    jobs.index.rename("id", inplace=True)
 
 
 @timer("Jobvite")

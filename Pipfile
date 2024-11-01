@@ -4,14 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+numpy = "==1.26.4"
 requests = "*"
-pandas = "==2.0.3"
-sqlalchemy = "~=1.4"
-sqlsorcery = {extras = ["mssql"],version = "*"}
+pandas = "*"
 job-notifications = "*"
-
-[dev-packages]
-pytest = "*"
+gbq-connector = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"

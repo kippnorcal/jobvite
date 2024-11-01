@@ -1,5 +1,5 @@
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime
 import glob
 import json
 import logging
@@ -10,13 +10,10 @@ import traceback
 from gbq_connector import CloudStorageClient
 from job_notifications import create_notifications
 from job_notifications import timer
-import pandas as pd
 
 from candidate import Candidate
-from data_config import custom_application_fields
 from job import Job
 from jobvite import JobviteAPI
-from transformations import Field_Transformations
 
 
 logging.basicConfig(
@@ -107,26 +104,24 @@ def rename_columns(candidates, jobs):
 
 @timer("Jobvite")
 def main():
+    jobvite_con = JobviteAPI()
+    cloud_client = CloudStorageClient()
+    logger.info("Getting candidate data")
+    get_candidates(jobvite_con, cloud_client)
+    logger.info("Cleaning up candidate files")
+    cleanup_files()
+
+    logger.info("Getting job data")
+    get_jobs(jobvite_con, cloud_client)
+    logger.info("Cleaning up job files")
+    cleanup_files()
+
+
+if __name__ == "__main__":
     notifications = create_notifications("Jobvite", "mailgun", logs="app.log")
     try:
-        jobvite_con = JobviteAPI()
-        cloud_client = CloudStorageClient()
-        logger.info("Getting candidate data")
-        get_candidates(jobvite_con, cloud_client)
-        logger.info("Cleaning up candidate files")
-        cleanup_files()
-
-        logger.info("Getting job data")
-        get_jobs(jobvite_con, cloud_client)
-        logger.info("Cleaning up job files")
-        cleanup_files()
-
-        notifications.notify()
+        main()
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
         notifications.notify(error_message=stack_trace)
-
-
-if __name__ == "__main__":
-    main()

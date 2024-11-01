@@ -18,12 +18,17 @@ class Candidate:
             value = value.replace("\n", sep)
         return value
     
-    def _convert_datetime(self, unix_timestamp):
+    def _convert_timestamp_to_utc_string(self, unix_timestamp):
         timestamp_without_miliseconds = unix_timestamp / 1000.0
         tz = pytz.timezone("America/Los_Angeles")
         return datetime.fromtimestamp(timestamp_without_miliseconds, tz).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
+    
+    def _convert_timestamp_to_date_string(self, unix_timestamp):
+        timestamp_without_miliseconds = unix_timestamp / 1000.0
+        tz = pytz.timezone("America/Los_Angeles")
+        return datetime.fromtimestamp(timestamp_without_miliseconds, tz).strftime("%Y-%m-%d")
 
     def _extract_candidate_info(self):
         self._extract_candidate_fields()

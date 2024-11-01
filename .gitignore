@@ -109,3 +109,4 @@ venv.bak/
 # Job specific
 output/*.*
 !output/.gitkeep
+service.json

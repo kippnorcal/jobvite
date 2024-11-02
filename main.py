@@ -7,6 +7,7 @@ import os
 import sys
 import traceback
 
+from gbq_connector import BigQueryClient
 from gbq_connector import CloudStorageClient
 from job_notifications import create_notifications
 from job_notifications import timer
@@ -42,31 +43,32 @@ parser.add_argument(
     default=(datetime.now()).strftime("%Y-%m-%d"),
 )
 
-args = parser.parse_args()
-START_DATE = args.start_date
-END_DATE = args.end_date
-
 LOCAL_STORAGE_FOLDER = "./output/"
 CANDIDATES_CLOUD_FOLDER = os.getenv("CANDIDATES_CLOUD_FOLDER")
 JOBS_CLOUD_FOLDER = os.getenv("JOBS_CLOUD_FOLDER")
 BUCKET = os.getenv("BUCKET")
+CANDIDATE_TABLE = os.getenv("CANDIDATE_TABLE")
 
 logger = logging.getLogger(__name__)
 
 
-def get_candidates(jobvite_con, cloud_client) -> None:
-    results = jobvite_con.candidates(start_date=START_DATE, end_date=END_DATE)
+def set_start_date()->str:
+    bq_conn = BigQueryClient()
+    result = bq_conn.query(f"SELECT MAX(lastUpdatedDate) FROM `{CANDIDATE_TABLE}`")
+    times_stamp = result.iloc[0, 0].strftime('%Y-%m-%d')
+    return times_stamp
+
+
+def get_candidates(results, cloud_client: CloudStorageClient) -> None:
     count = 0
     for result in results:
         data = Candidate(result).__dict__
         create_and_upload_file(data, cloud_client, "candidate_eid", "application_eid", "candidate")
         count += 1
-    results = jobvite_con.candidates(start_date=START_DATE, end_date=END_DATE)
     logging.info(f"Retrieved {count} candidate records from Jobvite API")
 
 
-def get_jobs(jobvite_con, cloud_client) -> None:
-    results = jobvite_con.jobs()
+def get_jobs(results, cloud_client: CloudStorageClient) -> None:
     count = 0
     for result in results:
         data = Job(result).__dict__
@@ -118,15 +120,25 @@ def cleanup_files() -> None:
 
 @timer("Jobvite")
 def main():
+
+    args = parser.parse_args()
+    start_date = args.start_date
+    end_date = args.end_date
+
     jobvite_con = JobviteAPI()
     cloud_client = CloudStorageClient()
-    logger.info("Getting candidate data")
-    get_candidates(jobvite_con, cloud_client)
+    if start_date is None:
+        start_date = set_start_date()
+
+    logger.info(f"Getting candidate data from {start_date} to {end_date}")
+    results = jobvite_con.candidates(start_date=start_date, end_date=end_date)
+    get_candidates(results, cloud_client)
     logger.info("Cleaning up candidate files")
     cleanup_files()
 
     logger.info("Getting job data")
-    get_jobs(jobvite_con, cloud_client)
+    results = jobvite_con.jobs()
+    get_jobs(results, cloud_client)
     logger.info("Cleaning up job files")
     cleanup_files()
 

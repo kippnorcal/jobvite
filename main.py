@@ -93,7 +93,7 @@ def create_and_upload_file(
         primary_key: requisitionId (job) or application_eId (candidate)
         record_type: 'job' or 'candidate'
         """
-        if record_type == "jobs":
+        if record_type == "job":
             cloud_folder = JOBS_CLOUD_FOLDER
         else:
             cloud_folder = CANDIDATES_CLOUD_FOLDER

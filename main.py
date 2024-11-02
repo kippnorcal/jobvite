@@ -144,7 +144,7 @@ def main():
 
 
 if __name__ == "__main__":
-    notifications = create_notifications("Jobvite", "mailgun", logs="app.log")
+    notifications = create_notifications("BQ Dev: Jobvite", "mailgun", logs="app.log")
     try:
         main()
     except Exception as e:

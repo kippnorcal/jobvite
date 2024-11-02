@@ -1,19 +1,20 @@
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime
+import glob
+import json
 import logging
+import os
 import sys
 import traceback
 
+from gbq_connector import BigQueryClient
+from gbq_connector import CloudStorageClient
 from job_notifications import create_notifications
 from job_notifications import timer
-import pandas as pd
-from sqlsorcery import MSSQL
 
 from candidate import Candidate
-from data_config import custom_application_fields
 from job import Job
-import jobvite
-from transformations import Field_Transformations
+from jobvite import JobviteAPI
 
 
 logging.basicConfig(
@@ -33,7 +34,7 @@ parser.add_argument(
     "--start-date",
     help="Start Date - format YYYY-MM-DD",
     dest="start_date",
-    default=(datetime.now() - timedelta(1)).strftime("%Y-%m-%d"),
+    default=None,
 )
 parser.add_argument(
     "--end-date",
@@ -42,60 +43,111 @@ parser.add_argument(
     default=(datetime.now()).strftime("%Y-%m-%d"),
 )
 
-args = parser.parse_args()
-START_DATE = args.start_date
-END_DATE = args.end_date
+LOCAL_STORAGE_FOLDER = "./output/"
+CANDIDATES_CLOUD_FOLDER = os.getenv("CANDIDATES_CLOUD_FOLDER")
+JOBS_CLOUD_FOLDER = os.getenv("JOBS_CLOUD_FOLDER")
+BUCKET = os.getenv("BUCKET")
+CANDIDATE_TABLE = os.getenv("CANDIDATE_TABLE")
 
 logger = logging.getLogger(__name__)
 
 
-def get_candidates():
-    results = jobvite.JobviteAPI().candidates(start_date=START_DATE, end_date=END_DATE)
-    candidates = []
+def set_start_date()->str:
+    bq_conn = BigQueryClient()
+    result = bq_conn.query(f"SELECT MAX(lastUpdatedDate) FROM `{CANDIDATE_TABLE}`")
+    times_stamp = result.iloc[0, 0].strftime('%Y-%m-%d')
+    return times_stamp
+
+
+def get_candidates(results, cloud_client: CloudStorageClient) -> None:
+    count = 0
     for result in results:
-        candidates.append(Candidate(result).__dict__)
-    logging.info(f"Retrieved {len(candidates)} candidate records from Jobvite API")
-    return pd.DataFrame(candidates)
+        data = Candidate(result).__dict__
+        create_and_upload_file(data, cloud_client, "candidate_eid", "application_eid", "candidate")
+        count += 1
+    logging.info(f"Retrieved {count} candidate records from Jobvite API")
 
 
-def get_jobs():
-    results = jobvite.JobviteAPI().jobs()
-    jobs = []
+def get_jobs(results, cloud_client: CloudStorageClient) -> None:
+    count = 0
     for result in results:
-        jobs.append(Job(result).__dict__)
-    logging.info(f"Retrieved {len(jobs)} job records from Jobvite API")
-    return pd.DataFrame(jobs)
+        data = Job(result).__dict__
+        create_and_upload_file(data, cloud_client, "eId", "requisitionId", "job")
+        count += 1
+    logging.info(f"Retrieved {count} job records from Jobvite API")
 
 
-def rename_columns(candidates, jobs):
-    candidates.rename(columns=custom_application_fields, inplace=True)
-    candidates.index.rename("id", inplace=True)
-    jobs.index.rename("id", inplace=True)
+def create_and_upload_file(
+        data: dict,
+        cloud_client: CloudStorageClient,
+        record_id:
+        str,
+        primary_key: str,
+        record_type: str
+        ) -> None:
+        """
+        This func helps reduce redundent code by uploading both candidate and job data.
+        data: the data of teh record
+        cloud_client: connection to Google cloud
+        record_id: eId (job) or candidate_eId (candidate)
+        primary_key: requisitionId (job) or application_eId (candidate)
+        record_type: 'job' or 'candidate'
+        """
+        if record_type == "jobs":
+            cloud_folder = JOBS_CLOUD_FOLDER
+        else:
+            cloud_folder = CANDIDATES_CLOUD_FOLDER
+
+        eid = data[record_id]
+        pk = data[primary_key]
+        file_name = f"{record_type}_{eid}_{pk}.ndjson"
+        local_file_path = os.path.join(LOCAL_STORAGE_FOLDER, file_name)
+        # Writing file to local dir
+        with open(local_file_path, "w") as f:
+            f.write(json.dumps(data) + "\n")
+        
+        # Uploading file from local dir
+        with open(local_file_path, "r") as f:
+            blob = os.path.join(cloud_folder, file_name)
+            cloud_client.load_file_to_cloud(BUCKET, blob, f)
+
+
+def cleanup_files() -> None:
+    files = glob.glob(f"./output/*.ndjson")
+    for file in files:
+        os.remove(file)
 
 
 @timer("Jobvite")
 def main():
-    notifications = create_notifications("Jobvite", "mailgun", logs="app.log")
+
+    args = parser.parse_args()
+    start_date = args.start_date
+    end_date = args.end_date
+
+    jobvite_con = JobviteAPI()
+    cloud_client = CloudStorageClient()
+    if start_date is None:
+        start_date = set_start_date()
+
+    logger.info(f"Getting candidate data from {start_date} to {end_date}")
+    results = jobvite_con.candidates(start_date=start_date, end_date=end_date)
+    get_candidates(results, cloud_client)
+    logger.info("Cleaning up candidate files")
+    cleanup_files()
+
+    logger.info("Getting job data")
+    results = jobvite_con.jobs()
+    get_jobs(results, cloud_client)
+    logger.info("Cleaning up job files")
+    cleanup_files()
+
+
+if __name__ == "__main__":
+    notifications = create_notifications("BQ Dev: Jobvite", "mailgun", logs="app.log")
     try:
-        candidates = get_candidates()
-        jobs = get_jobs()
-        rename_columns(candidates, jobs)
-        transformed_candidates = Field_Transformations(candidates).dataframe
-        connection = MSSQL()
-        connection.insert_into(
-            "jobvite_cache", transformed_candidates, if_exists="replace"
-        )
-        connection.exec_sproc("sproc_Jobvite_MergeExtract", autocommit=True)
-        connection.insert_into("jobvite_jobs_cache", jobs, if_exists="replace")
-        connection.exec_sproc("sproc_Jobvite_jobs_MergeExtract", autocommit=True)
-        logger.info(f"Loaded {len(candidates.index)} candidates")
-        logger.info(f"Loaded {len(jobs.index)} jobs")
-        notifications.notify()
+        main()
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()
         notifications.notify(error_message=stack_trace)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,3 +1,4 @@
+# Used in candidate.py
 candidate_fields = [
     "address",
     "address2",
@@ -12,6 +13,8 @@ candidate_fields = [
     "homePhone",
 ]
 
+
+# Used in candidate.py
 application_fields = [
     "disposition",
     "gender",
@@ -22,9 +25,10 @@ application_fields = [
     "veteranStatus",
     "workflowState",
     "workflowStateEId",
-    "hireDate",
 ]
 
+
+# Used in candidate.py
 job_fields = [
     "department",
     "jobType",
@@ -34,6 +38,8 @@ job_fields = [
     "title",
 ]
 
+
+# Used in jobs.py
 requisition_fields = [
     "category",
     "eId",
@@ -41,10 +47,7 @@ requisition_fields = [
     "title",
 ]
 
-custom_job_fields = {
-    "exempt_status": "exempt_status",
-}
-
+# Used in candidate.py
 custom_application_fields = {
     "are_you_a_former_or_current_kipp_employee": "formerOrCurrentKIPP",
     "are_you_an_alumnus_of_a_kipp_school": "KIPPAlumni",
@@ -98,6 +101,14 @@ custom_application_fields = {
     "is_this_a_rehire_promotion_or_internal_transfer": "is_this_a_rehire_promotion_or_internal_transfer"
 }
 
+
+# Used in candidate.py
+custom_job_fields = {
+    "exempt_status": "exempt_status",
+}
+
+
+# Used in candidate.py
 fields_format_newlines = [
     "scouting_report_shared_with_the_following_schools",
     "interviews_conducted_at_the_following_schools",

@@ -18,12 +18,17 @@ class Candidate:
             value = value.replace("\n", sep)
         return value
     
-    def _convert_datetime(self, unix_timestamp):
+    def _convert_timestamp_to_utc_string(self, unix_timestamp):
         timestamp_without_miliseconds = unix_timestamp / 1000.0
         tz = pytz.timezone("America/Los_Angeles")
         return datetime.fromtimestamp(timestamp_without_miliseconds, tz).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
+
+    def _convert_timestamp_to_date_string(self, unix_timestamp):
+        timestamp_without_miliseconds = unix_timestamp / 1000.0
+        tz = pytz.timezone("America/Los_Angeles")
+        return datetime.fromtimestamp(timestamp_without_miliseconds, tz).strftime("%Y-%m-%d")
 
     def _extract_candidate_info(self):
         self._extract_candidate_fields()
@@ -41,15 +46,21 @@ class Candidate:
     def _extract_application_fields(self):
         application = self.candidate.get("application")
         self.application_eid = application.get("eId")
-        self.lastUpdatedDate = self._convert_datetime(
+        self.lastUpdatedDate = self._convert_timestamp_to_utc_string(
             application.get("lastUpdatedDate")
         )
         if application.get("startDate") is not None:
-            self.startDate = self._convert_datetime(
+            self.startDate = self._convert_timestamp_to_date_string(
                 application.get("startDate")
             )
         else:
             self.startDate = None
+        if application.get("hireDate") is not None:
+            self.hireDate = self._convert_timestamp_to_date_string(
+                application.get("hireDate")
+            )
+        else:
+            self.hireDate = None
         for field in data_config.application_fields:
             value = self._remove_whitespace(application.get(field, "")," ")
             setattr(self, field, value)

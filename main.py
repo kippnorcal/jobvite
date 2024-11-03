@@ -147,6 +147,7 @@ if __name__ == "__main__":
     notifications = create_notifications("BQ Dev: Jobvite", "mailgun", logs="app.log")
     try:
         main()
+        notifications.notify()
     except Exception as e:
         logging.exception(e)
         stack_trace = traceback.format_exc()

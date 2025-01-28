@@ -1,5 +1,5 @@
 # jobvite
-An ETL service job for staging Jobvite candidate and job data
+An ETL job for extracting candidate and job data from Jobvite's API.
 
 ## Dependencies:
 
@@ -35,9 +35,6 @@ $ pipenv install
 ```
 $ docker build -t jobvite .
 ```
-If you get back an error then try the following command instead (this will likely happen if you are using a newer Macbook with an M1 chip):
-
-docker build -t jobvite . --no-cache --platform linux/amd64
 
 5. Create .env file with project secrets
 
@@ -52,31 +49,29 @@ MG_API_KEY=
 FROM_ADDRESS=
 TO_ADDRESS=
 
-DB_SERVER=
-DB=
-DB_USER=
-DB_PWD=
-DB_SCHEMA=
+# Google Cloud Storage Settings
+CANDIDATES_CLOUD_FOLDER=
+JOBS_CLOUD_FOLDER=
+CANDIDATE_TABLE=
+
+# Google Cloud Credentials
+GOOGLE_APPLICATION_CREDENTIALS=
+GBQ_PROJECT=
+BUCKET=
 ```
 
 ### Running the Job
 
-Run for yesterdays candidates.
+Regular run for new candidates. Will query Jobvite API for record updates based since the most recent timestamp in the data warehouse.
 
 ```
 $ docker run -t jobvite 
 ```
 
-Optionally, you can run it with start/end date arguments to pull more than just yesterday's candidates.
+Optionally, you can run it with start/end date arguments to pull candidates from a period of time.
 ```
-$ docker run -it jobvite --start-date='2019-07-01' --end-date='2019-07-31'
+$ docker run -t jobvite --start-date='2025-07-01' --end-date='2025-07-31'
 ```
-
-
-### Testing
-
-To execute tests, run:
-* `pipenv run pytest`
 
 ## Maintenance
 

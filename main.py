@@ -149,6 +149,14 @@ def main():
     logger.info("Cleaning up job files")
     cleanup_files()
 
+    if args.dbt_refresh:
+        dbt = DbtClient()
+        status = dbt.run_job()
+        if status:
+            logger.info("dbt refresh succeeded!")
+        else:
+            logger.info("dbt refresh failed. Check jobs in deployment.")
+
 
 if __name__ == "__main__":
     notifications = create_notifications("Jobvite", "mailgun", logs="app.log")

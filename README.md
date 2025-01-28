@@ -1,5 +1,5 @@
 # jobvite
-An ETL job for extracting candidate and job data from Jobvite's API.
+An ETL job for extracting candidate and job data from Jobvite's API to Google Cloud Storage.
 
 ## Dependencies:
 
@@ -58,6 +58,12 @@ CANDIDATE_TABLE=
 GOOGLE_APPLICATION_CREDENTIALS=
 GBQ_PROJECT=
 BUCKET=
+
+# dbt Credentials
+DBT_ACCOUNT_ID=
+DBT_JOB_ID=
+DBT_BASE_URL=
+DBT_PERSONAL_ACCESS_TOKEN=
 ```
 
 ### Running the Job

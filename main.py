@@ -9,6 +9,7 @@ import traceback
 
 from gbq_connector import BigQueryClient
 from gbq_connector import CloudStorageClient
+from gbq_connector import DbtClient
 from job_notifications import create_notifications
 from job_notifications import timer
 
@@ -41,6 +42,12 @@ parser.add_argument(
     help="End Date - format YYYY-MM-DD",
     dest="end_date",
     default=(datetime.now()).strftime("%Y-%m-%d"),
+)
+parser.add_argument(
+    "--refresh-dbt",
+    help="Refreshes dbt models downstream",
+    dest="dbt_refresh",
+    action="store_true"
 )
 
 LOCAL_STORAGE_FOLDER = "./output/"
@@ -141,6 +148,14 @@ def main():
     get_jobs(results, cloud_client)
     logger.info("Cleaning up job files")
     cleanup_files()
+
+    if args.dbt_refresh:
+        dbt = DbtClient()
+        status = dbt.run_job()
+        if status:
+            logger.info("dbt refresh succeeded!")
+        else:
+            logger.info("dbt refresh failed. Check jobs in deployment.")
 
 
 if __name__ == "__main__":

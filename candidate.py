@@ -49,18 +49,28 @@ class Candidate:
         self.lastUpdatedDate = self._convert_timestamp_to_utc_string(
             application.get("lastUpdatedDate")
         )
+
         if application.get("startDate") is not None:
             self.startDate = self._convert_timestamp_to_date_string(
                 application.get("startDate")
             )
         else:
             self.startDate = None
+
         if application.get("hireDate") is not None:
             self.hireDate = self._convert_timestamp_to_date_string(
                 application.get("hireDate")
             )
         else:
             self.hireDate = None
+
+        if application.get("sentDate") is not None:
+            self.sentDate = self._convert_timestamp_to_date_string(
+                application.get("sentDate")
+            )
+        else:
+            self.sentDate = None
+
         for field in data_config.application_fields:
             value = self._remove_whitespace(application.get(field, "")," ")
             setattr(self, field, value)

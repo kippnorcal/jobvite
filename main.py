@@ -114,7 +114,7 @@ def create_and_upload_file(
             f.write(json.dumps(data) + "\n")
         
         # Uploading file from local dir
-        with open(local_file_path, "r") as f:
+        with open(local_file_path, "rb") as f:
             blob = os.path.join(cloud_folder, file_name)
             cloud_client.load_file_to_cloud(BUCKET, blob, f)
 

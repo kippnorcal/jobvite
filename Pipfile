@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "==1.26.4"
+numpy = "*"
 requests = "*"
 pandas = "*"
 job-notifications = "*"
 gbq-connector = "*"
 
 [requires]
-python_version = "3.12"
+python_version = "3.14"
